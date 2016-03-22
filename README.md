@@ -6,4 +6,4 @@
 ### ToDo
 	- [ ] Fully integrate code from previous repository
 	- [ ] Implement help delimiter (In Node application, &nbsp is plain text, not HTML.)
-	- [ ] Implement original todos from https://github.com/jettcrowson/jettcrowson.github.io
+	- [ ] Implement original todos
