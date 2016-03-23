@@ -9,7 +9,7 @@ import babel from 'babelify';
 var plugins = gLP();
 
 const compile = () => {
-    var bundler = watchify(browserify('./src/index.js', { debug: true }).transform(babel, { presets: ["es2015"] }));
+    var bundler = watchify(browserify('./src/script.js', { debug: true }).transform(babel, { presets: ["es2015"] }));
 
     var rebundle = () => {
         bundler.bundle()

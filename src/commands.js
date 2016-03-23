@@ -14,7 +14,7 @@ function loadCommands() {
                     this.respond("To use:", `${toHelp},`, usage);
                 } else {
                     var availableCommands = [];
-                    for (var cmdName of cmdNames) {
+                    for (var cmdName in this._commands) {
                         var cmd = this._commands[cmdName];
                         if (cmd.unlocked) {
                             availableCommands.push(cmdName);
@@ -47,7 +47,21 @@ function loadCommands() {
         },
         save: {
             func: () => {
-                this.saveFunc(this);
+                // this.saveFunc(this);
+                var saveObj = {
+                    data: this.data,
+                    money: this.money,
+                    increment: this.increment,
+                    autoIncrement: this.autoIncrement,
+                    unlocked: []
+                };
+                for (var cmdName in this._commands) {
+                    var cmd = this._commands[cmdName];
+                    if (cmd.price !== 0 && cmd.unlocked) {
+                        saveObj.unlocked.push(cmdName);
+                    }
+                }
+                this.saveFunc(saveObj);
             },
             desc: "Saves progress.",
             usage: "save",
@@ -72,8 +86,10 @@ function loadCommands() {
                         var loss = Math.floor(Math.random() * 15 + 10);
                         // console.log('Loss:', loss);
                         var transfer = Math.round(amt * (1 - loss / 100));
-                        this.money += transfer;
-                        this.data -= transfer;
+                        // this.money += transfer;
+                        // this.data -= transfer;
+                        this.addMoney(transfer);
+                        this.removeData(transfer);
                         this.respond(`${loss}% data integrity lost in transfer. Data sold: ${amt}. Money gained: $${transfer}.`);
                     } else {
                         this.respond('You must sell at least 100 data. Please make sure you have 100 data.');
@@ -94,8 +110,10 @@ function loadCommands() {
                 if (amt) {
                     var cost = amt * 2;
                     if (this.money >= cost && typeof amt !== "number") {
-                        this.money -= cost;
-                        this.data += Number(amt);
+                        // this.money -= cost;
+                        // this.data += Number(amt);
+                        this.removeMoney(cost);
+                        this.addData(Number(amt));
                         this.respond(`${amt} data bought with $${cost}`);
                     } else {
                         this.respond("You do not have enough money.");
@@ -146,21 +164,43 @@ function loadCommands() {
         load: {
             func: () => {
                 var loadData = this.loadFunc();
-                if (!loadData) {
+                // if () {
+                //     this.respond("No save found.");
+                //     return;
+                // }
+                var previousSave = true;
+                for (var k in loadData) {
+                    if (loadData[k] === null) {
+                        previousSave = false;
+                        break;
+                    }
+                }
+                console.log(previousSave);
+                if (previousSave) {
+                    console.log(loadData);
+                    this.data = loadData.data;
+                    this.money = loadData.money;
+                    this.increment = loadData.increment;
+                    this.autoIncrement = loadData.autoIncrement;
+                    for (var unlockedCMD of loadData.unlocked) {
+                        this._commands[unlockedCMD].unlocked = true;
+                    }
+                    this.respond("Save loaded.");
+                } else {
                     this.respond("No save found.");
-                    return;
                 }
-                this.data = loadData.data;
-                this.money = loadData.money;
-                this.increment = loadData.increment;
-                this.autoIncrement = loadData.autoIncrement;
-                for (var unlockedCMD of loadData.unlocked) {
-                    this._commands[unlockedCMD].unlocked = true;
-                }
-                this.respond("Save loaded.");
             },
             desc: "Loads previously saved games.",
             usage: "load",
+            unlocked: true,
+            price: 0
+        },
+        cheat: {
+            func: () => {
+                this.addData(10000);
+            },
+            desc: "For testing purposes.",
+            usage: "cheat",
             unlocked: true,
             price: 0
         }

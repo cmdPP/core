@@ -1,31 +1,33 @@
 import { expect } from 'chai';
-import { CMD } from '../src';
+import { CMD } from '../src/cmd';
 import jsonfile from 'jsonfile';
 
 var cmd = new CMD({
     respond: (...txt) => {},
-    save: (cmdObj) => {
+    save: (cmdData) => {
         // console.log(this);
         // console.log(cmdObj);
 
-        var saveObj = {
-            data: cmdObj.data,
-            money: cmdObj.money,
-            increment: cmdObj.increment,
-            autoIncrement: cmdObj.autoIncrement,
-            unlocked: [],
-        };
-        for (var cmdName in cmdObj._commands) {
-            // console.log(`${cmdName}:`, cmdObj._commands[cmdName].unlocked);
-            var cmd = cmdObj._commands[cmdName];
-            if (cmd.price !== 0 && cmd.unlocked) {
-                saveObj.unlocked.push(cmdName);
-            }
-        }
+        // var saveObj = {
+        //     data: cmdObj.data,
+        //     money: cmdObj.money,
+        //     increment: cmdObj.increment,
+        //     autoIncrement: cmdObj.autoIncrement,
+        //     unlocked: [],
+        // };
+        // for (var cmdName in cmdObj._commands) {
+        //     // console.log(`${cmdName}:`, cmdObj._commands[cmdName].unlocked);
+        //     var cmd = cmdObj._commands[cmdName];
+        //     if (cmd.price !== 0 && cmd.unlocked) {
+        //         saveObj.unlocked.push(cmdName);
+        //     }
+        // }
 
-        jsonfile.writeFileSync('test_save.json', saveObj, { spaces: 2 });
+        // jsonfile.writeFileSync('test_save.json', saveObj, { spaces: 2 });
+
+        jsonfile.writeFileSync('test_save.json', cmdData, { spaces: 2 });
     },
-    load: (cmdObj) => {
+    load: () => {
         // console.log(this);
         // console.log(cmdObj);
         return jsonfile.readFileSync('test_save.json');

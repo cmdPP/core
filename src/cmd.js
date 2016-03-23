@@ -1,4 +1,4 @@
-import human from 'humanize';
+import humanize from 'humanize';
 import { loadCommands as loadCMDs } from './commands';
 
 class CMD {
@@ -7,8 +7,8 @@ class CMD {
             respond: (...txt) => {
                 console.log(...txt);
             },
-            save: (cmdObj) => console.warn('No save function has been set.'),
-            load: (cmdObj) => console.warn('No load function has been set.'),
+            save: (cmdData) => console.warn('No save function has been set.'),
+            load: () => console.warn('No load function has been set.'),
             update: (cmdObj) => console.warn('No update function has been set.')
         };
         var options = Object.assign({}, defaults, opts);
@@ -117,6 +117,10 @@ class CMD {
     removeMoney(amt) {
         this.money -= amt;
         this.update();
+    }
+
+    formatBytes() {
+        return humanize.filesize(this.data);
     }
 }
 

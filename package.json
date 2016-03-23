@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "humanize": "0.0.9",
+    "jquery": "^2.2.2",
     "watchify": "^3.7.0"
   }
 }
