@@ -1,0 +1,122 @@
+function loadCommands() {
+    this._commands = {
+        help: {
+            func: (toHelp) => {
+                if (toHelp) {
+                    if (!(toHelp in this._commands)) {
+                        this.respond("Command not found or no help is available. Type 'help' with no arguments to see a list of commands.");
+                        return;
+                    }
+                    let { desc, usage } = this._commands[toHelp];
+                    desc = (typeof desc === "function" ? desc() : desc);
+                    usage = (typeof usage === "function" ? usage() : usage);
+                    this.respond(`${toHelp}:`, desc);
+                    this.respond("To use:", `${toHelp},`, usage);
+                } else {
+                    var availableCommands = [];
+                    for (var cmdName of cmdNames) {
+                        var cmd = this._commands[cmdName];
+                        if (cmd.unlocked) {
+                            availableCommands.push(cmdName);
+                        }
+                    }
+                    // var cmdList = availableCommands.join("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                    var cmdList = availableCommands.join("\n\t");
+                    this.respond("########################################");
+                    this.respond('List of commands:');
+                    this.respond(cmdList);
+                    this.respond(" ");
+                    this.respond("For specific command help type 'help [command]'");
+                    this.respond("########################################");
+                }
+            },
+            desc: "Gives list of commands or specific instructions for commands.",
+            usage: "help [command]",
+            unlocked: true,
+            price: 0
+        },
+        mineData: {
+            func: () => {
+                this.respond("Data mined.");
+                this.addData(this.increment);
+            },
+            desc: "Increments data by your increment amount. The default is 1 byte.",
+            usage: "mineData",
+            unlocked: true,
+            price: 0
+        },
+        save: {
+            func: () => {
+                this.saveFunc(this);
+            },
+            desc: "Saves files to your browser so you can load the game.",
+            usage: "save",
+            unlocked: true,
+            price: 0
+        },
+        autoMine: {
+            func: () => {
+                this.autoIncrement = 1;
+                this.respond(`Automatic mining beginning at a rate of ${this.autoIncrement} byte per second.`);
+            },
+            desc: "Every second, increments your data by the auto increment amount. Default is 1 byte per second.",
+            usage: "autoMine",
+            unlocked: false,
+            price: 20
+        },
+        sellData: {
+            func: (amt) => {
+                if (amt) {
+                    // amt = Number(amt);
+                    if (this.data >= amt && this.data >= 100 && typeof amt !== "number") {
+                        var loss = Math.floor(Math.random() * 15 + 10);
+                        console.log('Loss:', loss);
+                        var transfer = Math.round(amt * (1 - loss / 100));
+                        this.money += transfer;
+                        this.data -= transfer;
+                        this.respond(`${loss}% data integrity lost in transfer. Data sold: ${amt}. Money gained: $${transfer}.`);
+                    } else {
+                        this.respond('You must sell at least 100 data. Please make sure you have 100 data.');
+                    }
+                } else {
+                    this.respond("Argument needed.");
+                    this.respond(' ');
+                    this._commands.help('sellData');
+                }
+            },
+            desc: "Converts data to money. The conversion is 1 byte for $1, but the data deteriorates during transfer.",
+            usage: "sellData [amount]",
+            unlocked: false,
+            price: 250
+        },
+        buyData: {
+            func: () => {
+
+            },
+            desc: "Converts money to data. The conversion is 1 byte for $2.",
+            usage: "buyData [amount]",
+            unlocked: false,
+            price: 150
+        },
+        buyCommand: {
+            func: () => {
+
+            },
+            desc: () => {
+                var cmdList = [];
+                for (var cmdName in this._commands) {
+                    var cmd = this._commands[cmdName];
+                    if (!cmd.unlocked && cmd.price !== 0) {
+                        cmdList.push(`${cmdName}: ${cmd.price}`);
+                    }
+                }
+                this.respond("Purchases and unlocks a command.");
+                this.respond("Available commands:\n\t", cmdList.join("\n\t"));
+            },
+            usage: "buyCommand [command]"
+        }
+    };
+}
+
+export { loadCommands };
+export default loadCommands;
