@@ -49,7 +49,7 @@ function loadCommands() {
             func: () => {
                 this.saveFunc(this);
             },
-            desc: "Saves files to your browser so you can load the game.",
+            desc: "Saves progress.",
             usage: "save",
             unlocked: true,
             price: 0
@@ -90,8 +90,19 @@ function loadCommands() {
             price: 250
         },
         buyData: {
-            func: () => {
-
+            func: (amt) => {
+                if (amt) {
+                    var cost = amt * 2;
+                    if (this.money >= cost && typeof amt !== "number") {
+                        this.money -= cost;
+                        this.data += Number(amt);
+                        this.respond(`${amt} data bought with $${cost}`);
+                    } else {
+                        this.respond("You do not have enough money.");
+                    }
+                } else {
+                    this.respond("Argument needed. Try: buyData [amount]");
+                }
             },
             desc: "Converts money to data. The conversion is 1 byte for $2.",
             usage: "buyData [amount]",
@@ -99,8 +110,23 @@ function loadCommands() {
             price: 150
         },
         buyCommand: {
-            func: () => {
-
+            func: (cmdName) => {
+                if (cmdName && cmdName in this._commands) {
+                    var cmd = this._commands[cmdName];
+                    if (this.data >= cmd.price) {
+                        if (!cmd.unlocked) {
+                            cmd.unlocked = true;
+                            this.removeData(cmd.price);
+                            this.respond(`Command unlocked: ${cmdName}`);
+                        } else {
+                            this.respond("Command already unlocked.");
+                        }
+                    } else {
+                        this.respond("You don't have enough data to buy this command.");
+                    }
+                } else {
+                    this.respond("Command not found for purchase.");
+                }
             },
             desc: () => {
                 var cmdList = [];
@@ -113,7 +139,30 @@ function loadCommands() {
                 this.respond("Purchases and unlocks a command.");
                 this.respond("Available commands:\n\t", cmdList.join("\n\t"));
             },
-            usage: "buyCommand [command]"
+            usage: "buyCommand [command]",
+            unlocked: true,
+            price: 0
+        },
+        load: {
+            func: () => {
+                var loadData = this.loadFunc();
+                if (!loadData) {
+                    this.respond("No save found.");
+                    return;
+                }
+                this.data = loadData.data;
+                this.money = loadData.money;
+                this.increment = loadData.increment;
+                this.autoIncrement = loadData.autoIncrement;
+                for (var unlockedCMD of loadData.unlocked) {
+                    this._commands[unlockedCMD].unlocked = true;
+                }
+                this.respond("Save loaded.");
+            },
+            desc: "Loads previously saved games.",
+            usage: "load",
+            unlocked: true,
+            price: 0
         }
     };
 }

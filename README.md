@@ -4,6 +4,8 @@
 
 
 ##### ToDos
-- [ ] Fully integrate code from previous repository
-- [ ] Implement help delimiter (In Node application, &nbsp is plain text, not HTML.)
-- [ ] Implement [original todos](https://github.com/jettcrowson/jettcrowson.github.io#todo)
+- [ ] Fully integrate code from previous repository before storage was added.
+- [ ] Implement help delimiter (In Node application, &nbsp is plain text, not HTML).
+- [ ] Implement [original todos](https://github.com/jettcrowson/jettcrowson.github.io#todo).
+- [ ] Add storage
+- [ ] Add unit tests.

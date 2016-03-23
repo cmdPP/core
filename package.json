@@ -22,6 +22,7 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
+    "humanize": "0.0.9",
     "watchify": "^3.7.0"
   }
 }

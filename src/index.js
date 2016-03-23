@@ -1,3 +1,4 @@
+import human from 'humanize';
 import { loadCommands as loadCMDs } from './commands';
 
 class CMD {
