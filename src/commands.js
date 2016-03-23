@@ -70,7 +70,7 @@ function loadCommands() {
                     // amt = Number(amt);
                     if (this.data >= amt && this.data >= 100 && typeof amt !== "number") {
                         var loss = Math.floor(Math.random() * 15 + 10);
-                        console.log('Loss:', loss);
+                        // console.log('Loss:', loss);
                         var transfer = Math.round(amt * (1 - loss / 100));
                         this.money += transfer;
                         this.data -= transfer;
@@ -81,7 +81,7 @@ function loadCommands() {
                 } else {
                     this.respond("Argument needed.");
                     this.respond(' ');
-                    this._commands.help('sellData');
+                    this._commands.help.func('sellData');
                 }
             },
             desc: "Converts data to money. The conversion is 1 byte for $1, but the data deteriorates during transfer.",

@@ -2,13 +2,16 @@ import human from 'humanize';
 import { loadCommands as loadCMDs } from './commands';
 
 class CMD {
-    constructor(options = {
-        respond: (text) => console.warn('No respond function has been set.'),
-        // storage: (cmdObj) => console.warn('No storage function has been set.'),
-        save: (cmdObj) => console.warn('No save function has been set.'),
-        load: (cmdObj) => console.warn('No load function has been set.'),
-        update: (cmdObj) => console.warn('No update function has been set.')
-    }) {
+    constructor(opts) {
+        var defaults = {
+            respond: (...txt) => {
+                console.log(...txt);
+            },
+            save: (cmdObj) => console.warn('No save function has been set.'),
+            load: (cmdObj) => console.warn('No load function has been set.'),
+            update: (cmdObj) => console.warn('No update function has been set.')
+        };
+        var options = Object.assign({}, defaults, opts);
         this.loadCommands = loadCMDs;
         this.money = 0;
         this.increment = 1;
@@ -27,6 +30,8 @@ class CMD {
         this.loadFunc = options.load;
         this.updateFunc = options.update;
         this.loadCommands();
+
+        this.command("load");
     }
 
     gameLoop() {
@@ -38,8 +43,12 @@ class CMD {
         }, 1000);
     }
 
+    respond(...txt) {
+        this.respondFunc(...txt);
+    }
+
     command(str = "") {
-        if (cmd !== "") {
+        if (str !== "") {
             this.runCommand(str);
             if (this.historyBufferEnabled) {
                 if (this.historyBuffer[0] !== str) {
@@ -75,12 +84,12 @@ class CMD {
             console.log('Command not found.');
         } else {
             var cmdWArgs = cmd.split(' ');
-            if (cmdWArgs[0] in this._commands) {
+            if (!(cmdWArgs[0] in this._commands)) {
                 this.respond("Command not found.");
             } else {
-                console.log(cmdWArgs);
+                // console.log(cmdWArgs);
                 if (this._commands[cmdWArgs[0]].unlocked) {
-                    this._commands[cmdWArgs[0]].func(cmdWArgs);
+                    this._commands[cmdWArgs[0]].func(...cmdWArgs.slice(1));
                 }
             }
         }
@@ -95,8 +104,21 @@ class CMD {
         this.update();
     }
 
+    removeData(amt) {
+        this.data -= amt;
+        this.update();
+    }
+
     addMoney(amt) {
         this.money += amt;
         this.update();
     }
+
+    removeMoney(amt) {
+        this.money -= amt;
+        this.update();
+    }
 }
+
+export { CMD };
+export default CMD;
