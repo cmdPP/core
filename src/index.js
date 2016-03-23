@@ -1,4 +1,4 @@
-import humanize from 'humanize';
+import filesize from 'filesize';
 import { loadCommands as loadCMDs } from './commands';
 
 class CMD {
@@ -120,7 +120,8 @@ class CMD {
     }
 
     formatBytes() {
-        return humanize.filesize(this.data);
+        // return humanize.filesize(this.data);
+        return filesize(this.data);
     }
 }
 

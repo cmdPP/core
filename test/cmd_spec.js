@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { CMD } from '../src/cmd';
+import { CMD } from '../src';
 import jsonfile from 'jsonfile';
 
 var cmd = new CMD({
@@ -85,6 +85,11 @@ describe('CMD', () => {
         cmd.command("buyData 5");
         expect(cmd.data).to.above(currentData);
         expect(cmd.money).to.below(currentMoney);
+    });
+
+    it('outputs human readable bytes', () => {
+        cmd.data = 10000;
+        expect(cmd.formatBytes()).to.equal("9.77 KB");
     });
 
     it('saves', () => {
