@@ -1,9 +1,10 @@
 {
-  "name": "cmdPP-core",
+  "name": "cmdpp-core",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
+    "prepublish": "gulp browser:clean babel",
     "test": "mocha --compilers js:babel-register"
   },
   "keywords": [],

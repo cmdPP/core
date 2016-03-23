@@ -72,7 +72,7 @@ var plugins = gLP();
 // });
 
 // gulp.task('browser-babel', () => {
-gulp.task('_browser:build', () => {
+gulp.task('browser:build', () => {
     return browserify('./src/web.js', { debug: true })
         .transform(babel, { presets: ['es2015'] })
         .bundle()
@@ -86,24 +86,24 @@ gulp.task('_browser:build', () => {
     // return bundling('./src/web.js', (b) => b.transform(babel, { presets: ['es2015'] }));
 });
 
-gulp.task('_browser:clean', () => {
+gulp.task('browser:clean', () => {
     return del('build/**/*');
 });
 
 gulp.task('browser', (cb) => {
-    return runSeq('_browser:clean', '_browser:build', cb);
+    return runSeq('browser:clean', 'browser:build', cb);
 });
 
-gulp.task('_babel:build', () => {
-    gulp.src('src/**/*.js').pipe(plugins.babel()).pipe(gulp.dest('dist'));
+gulp.task('babel:build', () => {
+    gulp.src('src/**/*.js').pipe(plugins.babel()).pipe(gulp.dest('lib'));
 });
 
-gulp.task('_babel:clean', () => {
-    return del('dist/**/*');
+gulp.task('babel:clean', () => {
+    return del('lib/**/*');
 });
 
 gulp.task('babel', (cb) => {
-    return runSeq('_babel:clean', '_babel:build', cb);
+    return runSeq('babel:clean', 'babel:build', cb);
 });
 
 gulp.task('build', (cb) => {
