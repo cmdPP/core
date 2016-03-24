@@ -74,6 +74,8 @@ var plugins = gLP();
 // gulp.task('browser-babel', () => {
 gulp.task('browser:build', () => {
     return browserify('./src/web.js', { debug: true })
+        .ignore('moniker')
+        .ignore('charlatan')
         .transform(babel, { presets: ['es2015'] })
         .bundle()
         .pipe(source(`bundle-${pJSON.version}.js`))

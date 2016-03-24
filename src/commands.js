@@ -205,6 +205,8 @@ function loadCommands() {
                     var verb = (Math.random() < 0.5 ? 'likes' : 'dislikes');
                     var sub = Moniker.generator([Moniker.noun]).choose();
                     this.respond(`${name} ${verb} ${sub}`);
+                } else {
+                    this.respond("You do not have enought data to use this command.");
                 }
             },
             desc: "Prints a read-out sampling some collected data.",
@@ -222,6 +224,10 @@ function loadCommands() {
         //     price: 0
         // }
     };
+
+    if (Name === undefined || Moniker === undefined) {
+        delete this._commands.sampleData;
+    }
 }
 
 export { loadCommands };
