@@ -40,7 +40,8 @@ class CMD {
         this.gameLoopInterval = setInterval(() => {
             this.counter++;
             if (this.counter % 10 === 0) {
-                this.command.save(false);
+                // this.command.save(false);
+                this.command("save");
             }
         }, 1000);
 

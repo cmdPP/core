@@ -55,7 +55,7 @@ function loadCommands() {
                         'For specific command help type "help [command]"',
                         "########################################",
                     ]);
-                    this.respond(responseList);
+                    this.respond(...responseList);
                 }
             },
             desc: "Gives list of commands or specific instructions for commands.",
