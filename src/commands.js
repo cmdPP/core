@@ -13,24 +13,49 @@ function loadCommands() {
                     let { desc, usage } = this._commands[toHelp];
                     desc = (typeof desc === "function" ? desc() : desc);
                     usage = (typeof usage === "function" ? usage() : usage);
-                    this.respond(`${toHelp}:`, desc);
-                    this.respond("To use:", `${toHelp},`, usage);
+                    if (Array.isArray(desc)) {
+                        // this.respond(`${toHelp}:`, desc[0]);
+                        // this.respond("To use:", `${toHelp},`, usage);
+                        // this.respond('');
+                        this.respond(`${toHelp}: ${desc[0]}`, `To use: ${usage}\n\n`, ...desc.slice(1));
+                        // this.respond(`To use: ${usage}\n`);
+                        // for (var resp of desc.slice(1)) {
+                        //     this.respond(resp);
+                        // }
+                        // this.respond(...desc.slice(1));
+                    } else {
+                        // this.respond(`${toHelp}:`, desc);
+                        // this.respond("To use:", `${toHelp},`, usage);
+                        this.respond(`${toHelp}: ${desc}`, `To use: ${usage}`);
+                        // this.respond(`To use: ${usage}`);
+                    }
                 } else {
                     var availableCommands = [];
                     for (var cmdName in this._commands) {
                         var cmd = this._commands[cmdName];
                         if (cmd.unlocked) {
-                            availableCommands.push(cmdName);
+                            availableCommands.push(`\t${cmdName}`);
                         }
                     }
                     // var cmdList = availableCommands.join("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                    var cmdList = availableCommands.join("\n\t");
-                    this.respond("########################################");
-                    this.respond('List of commands:');
-                    this.respond(cmdList);
-                    this.respond(" ");
-                    this.respond("For specific command help type 'help [command]'");
-                    this.respond("########################################");
+                    // var cmdList = availableCommands.join("\n\t");
+                    // this.respond("########################################");
+                    // this.respond('List of commands:');
+                    // this.respond(cmdList);
+                    // this.respond(" ");
+                    // this.respond("For specific command help type 'help [command]'");
+                    // this.respond("########################################");
+                    var responseList = [
+                        "########################################",
+                        "List of commands",
+                        ""
+                    ];
+                    responseList.push(...availableCommands);
+                    responseList.push(...[
+                        'For specific command help type "help [command]"',
+                        "########################################",
+                    ]);
+                    this.respond(responseList);
                 }
             },
             desc: "Gives list of commands or specific instructions for commands.",
@@ -154,11 +179,16 @@ function loadCommands() {
                 for (var cmdName in this._commands) {
                     var cmd = this._commands[cmdName];
                     if (!cmd.unlocked && cmd.price !== 0) {
-                        cmdList.push(`${cmdName}: ${cmd.price}`);
+                        cmdList.push(`\t${cmdName}: ${cmd.price}`);
                     }
                 }
-                this.respond("Purchases and unlocks a command.");
-                this.respond("Available commands:\n\t", cmdList.join("\n\t"));
+                // this.respond("Purchases and unlocks a command.");
+                // this.respond("Available commands:\n\t", cmdList.join("\n\t"));
+                return [
+                    "Purchases and unlocks a command.",
+                    "Available commands:",
+                    ...cmdList
+                ];
             },
             usage: "buyCommand [command]",
             unlocked: true,

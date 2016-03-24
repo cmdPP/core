@@ -32,15 +32,19 @@ class CMD {
         this.loadCommands();
 
         this.command("load");
+        this.gameLoopInterval = undefined;
+        this.gameLoop();
     }
 
     gameLoop() {
-        return setInterval(() => {
+        this.gameLoopInterval = setInterval(() => {
             this.counter++;
             if (this.counter % 10 === 0) {
                 this.command.save(false);
             }
         }, 1000);
+
+        return this.gameLoopInterval;
     }
 
     respond(...txt) {
