@@ -208,7 +208,9 @@ function loadCommands() {
                 }
             },
             desc: "Prints a read-out sampling some collected data.",
-            usage: "sampleData"
+            usage: "sampleData",
+            unlocked: true,
+            price: 0
         }
         // cheat: {
         //     func: () => {
