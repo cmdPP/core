@@ -52,7 +52,7 @@ function loadCommands() {
                     ];
                     responseList.push(...availableCommands);
                     responseList.push(...[
-                        'For specific command help type "help [command]"',
+                        '\nFor specific command help type "help [command]"',
                         "########################################",
                     ]);
                     this.respond(...responseList);
