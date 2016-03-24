@@ -1,3 +1,6 @@
+import { Name } from 'charlatan';
+import Moniker from 'moniker';
+
 function loadCommands() {
     this._commands = {
         help: {
@@ -195,15 +198,27 @@ function loadCommands() {
             unlocked: true,
             price: 0
         },
-        cheat: {
+        sampleData: {
             func: () => {
-                this.addData(10000);
+                if (this.data > 0) {
+                    var name = Name.firstName();
+                    var verb = (Math.random() < 0.5 ? 'likes' : 'dislikes');
+                    var sub = Moniker.generator([Moniker.noun]).choose();
+                    this.respond(`${name} ${verb} ${sub}`);
+                }
             },
-            desc: "For testing purposes.",
-            usage: "cheat",
-            unlocked: true,
-            price: 0
+            desc: "Prints a read-out sampling some collected data.",
+            usage: "sampleData"
         }
+        // cheat: {
+        //     func: () => {
+        //         this.addData(10000);
+        //     },
+        //     desc: "For testing purposes.",
+        //     usage: "cheat",
+        //     unlocked: true,
+        //     price: 0
+        // }
     };
 }
 

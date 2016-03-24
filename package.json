@@ -30,8 +30,10 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
+    "charlatan": "^1.0.0",
     "filesize": "^3.2.1",
     "jquery": "^2.2.2",
+    "moniker": "^0.1.2",
     "watchify": "^3.7.0"
   }
 }
