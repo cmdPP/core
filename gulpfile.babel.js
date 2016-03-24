@@ -10,75 +10,14 @@ import pJSON from './package.json';
 
 var plugins = gLP();
 
-// const compile = () => {
-//     var bundler = watchify(browserify('./src/script.js', { debug: true }).transform(babel, { presets: ["es2015"] }));
-//
-//     var rebundle = () => {
-//         bundler.bundle()
-//             .on('error', function(err) {
-//                 console.error(err);
-//                 this.emit('end');
-//             })
-//             .pipe(source(`bundle-${pJSON.version}.js`))
-//             .pipe(buffer())
-//             .pipe(plugins.sourcemaps.init({ loadMaps: true }))
-//             .pipe(plugins.sourcemaps.write('./'))
-//             .pipe(gulp.dest('./'));
-//     };
-//     rebundle();
-// };
-
-// const bundling = (entry, cb = undefined) => {
-//     if (cb === undefined || typeof cb !== "function") {
-//         cb = (b) => b;
-//     }
-//     // var b = browserify('./src/index.js', { debug: true });
-//     var b = browserify(entry, { debug: true });
-//     // console.log(b);
-//     b = cb(b);
-//     // console.log(b);
-//     return b.bundle()
-//         // .pipe(source(`bundle-${pJSON.version}.js`))
-//         .pipe(source(`bundle-${pJSON.version}.js`))
-//         .pipe(buffer())
-//         .pipe(plugins.sourcemaps.init({ loadMaps: true }))
-//         .pipe(plugins.uglify())
-//         .on('error', plugins.util.log)
-//         .pipe(plugins.sourcemaps.write('./'))
-//         .pipe(gulp.dest('./build'));
-// };
-
-// gulp.task('_browser', (cb) => {
-//     return bundling('./dist/index.js');
-// });
-//
-// gulp.task('browser', (cb) => {
-//     // return browserify('./src/cmd.js', { debug: true })
-//     //     // .transform(babel, { presets: ['es2015'] })
-//     //     .bundle()
-//     //     .pipe(source(`bundle-${pJSON.version}.js`))
-//     //     .pipe(buffer())
-//     //     .pipe(plugins.sourcemaps.init({ loadMaps: true }))
-//     //     .pipe(uglify())
-//     //     .on('error', plugins.util.log)
-//     //     .pipe(plugins.sourcemaps.write('./'))
-//     //     .pipe(gulp.dest('./build'));
-//
-//     // return bundling();
-//
-//     return runSeq('babel', '_browser', cb);
-//
-//     // return compile();
-// });
-
-// gulp.task('browser-babel', () => {
 gulp.task('browser:build', () => {
     return browserify('./src/web.js', { debug: true })
         .ignore('moniker')
         .ignore('charlatan')
         .transform(babel, { presets: ['es2015'] })
         .bundle()
-        .pipe(source(`bundle-${pJSON.version}.js`))
+        // .pipe(source(`bundle-${pJSON.version}.js`))
+        .pipe(source('bundle.js'))
         .pipe(buffer())
         .pipe(plugins.sourcemaps.init({ loadMaps: true }))
         .pipe(plugins.uglify())
