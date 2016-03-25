@@ -111,7 +111,8 @@ function loadCommands() {
         },
         sellData: {
             func: (amt, unit = "B") => {
-                if (amt) {
+                if (amt && !isNaN(amt)) {
+                    amt = parseInt(amt);
                     switch (unit) {
                         case "YB":
                             amt *= 1024;
@@ -135,8 +136,11 @@ function loadCommands() {
                         default:
                             this.respond("Unrecognized byte size.");
                     }
+                    console.log('Sell Data Unit:', unit);
+                    console.log('Sell Data Amount:', amt);
                     // amt = Number(amt);
-                    if (this.data >= amt && this.data >= 100 && typeof amt !== "number") {
+                    // if (this.data >= amt && this.data >= 100 && typeof amt !== "number") {
+                    if (this.data >= amt && amt >= 100) {
                         var loss = Math.floor(Math.random() * 15 + 10);
                         // console.log('Loss:', loss);
                         var transfer = Math.round(amt * (1 - loss / 100));
@@ -161,8 +165,8 @@ function loadCommands() {
         },
         buyData: {
             func: (amt, unit = "B") => {
-                if (amt) {
-
+                if (amt && !isNan(amt)) {
+                    amt = parseInt(amt);
                     switch (unit) {
                         case "YB":
                             amt *= 1024;
@@ -188,7 +192,8 @@ function loadCommands() {
                     }
 
                     var cost = amt * 2;
-                    if (this.money >= cost && typeof amt !== "number") {
+                    // if (this.money >= cost && typeof amt !== "number") {
+                    if (this.money >= cost) {
                         // this.money -= cost;
                         // this.data += Number(amt);
                         this.removeMoney(cost);
@@ -324,7 +329,23 @@ function loadCommands() {
                     this.command("help upgradeStorage");
                 }
             },
-            desc: "Upgrades your storage capacity.",
+            // desc: "Upgrades your storage capacity.",
+            desc: () => {
+                var storList = [];
+                for (var storName in this.storages) {
+                    var storage = this.storages[storName];
+                    if (this.storage === storName) {
+                        storName = "* "+storName;
+                    }
+                    storList.push(`\t${storName}\t|\t${storage.capacity}\t|\t${storage.price}|`);
+                }
+                return [
+                    'Upgrades your storage capacity.',
+                    'Available storage options:',
+                    '\tName\t|\tCapacity\t|\tPrice',
+                    ...storList
+                ];
+            },
             usage: "upgradeStorage [storage]",
             unlocked: true,
             price: 0
