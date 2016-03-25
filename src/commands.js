@@ -155,7 +155,7 @@ function loadCommands() {
                 }
             },
             desc: "Converts data to money. The conversion is 1 byte for $1, but the data deteriorates during transfer.",
-            usage: "sellData [amount]",
+            usage: "sellData [amount] {unit}",
             unlocked: false,
             price: 250
         },
@@ -202,7 +202,7 @@ function loadCommands() {
                 }
             },
             desc: "Converts money to data. The conversion is 1 byte for $2.",
-            usage: "buyData [amount]",
+            usage: "buyData [amount] {unit}",
             unlocked: false,
             price: 150
         },
