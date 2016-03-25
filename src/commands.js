@@ -341,7 +341,7 @@ function loadCommands() {
                     storList.push(...[
                         `\t${storName}`,
                         `\t\tCapacity: ${capacity}`,
-                        `\t\tPrice: ${stor.price}`
+                        `\t\tPrice: $${stor.price}`
                     ]);
                 }
                 return [
