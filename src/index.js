@@ -16,6 +16,8 @@ class CMD {
         this.money = 0;
         this.increment = 1;
         this.autoIncrement = 0;
+        this.isAutoMining = false;
+        this.storage = "selectronTube";
         this.historyBufferEnabled = true;
         this.historyBuffer = [];
         this.historyBufferCurrentIdx = -1;
@@ -43,6 +45,15 @@ class CMD {
                 // this.command.save(false);
                 this.command("save");
             }
+            if (this.isAutoMining) {
+                if (this.checkStorage()) {
+                    this.addData(this.autoIncrement);
+                } else {
+                    this.update();
+                    this.respond("Please upgrade your storage with upgradeStorage");
+                    this.command("autoMine stop");
+                }
+            }
         }, 1000);
 
         return this.gameLoopInterval;
@@ -50,6 +61,10 @@ class CMD {
 
     respond(...txt) {
         this.respondFunc(...txt);
+    }
+
+    checkStorage() {
+        return (this.data <= this.storages[this.storage].capacity);
     }
 
     command(str = "") {
@@ -125,8 +140,42 @@ class CMD {
     }
 
     formatBytes() {
-        // return humanize.filesize(this.data);
-        return filesize(this.data);
+        return formatter(this.data);
+    }
+
+    formatter(size) {
+        return filesize(size);
+    }
+
+    getStorage() {
+        var storages = [
+            'selectronTube',
+            'floppyDisk',
+            'zipDrive',
+            'DVD',
+            'sdCard',
+            'flashDrive',
+            'SSD',
+            'ssdArray',
+            'serverRack',
+            'serverRoom',
+            'serverWarehouse',
+            'multipleLocations',
+            'smallAfricanCountry',
+            'multipleCountries',
+            'alienSpaceArray',
+            'enslavedHumans'
+        ];
+
+        var storageObj = {};
+        for (var i = 0; i < storages.length; i++) {
+            storageObj[storages[i]] = {
+                capacity: Math.pow(1024, i+1),
+                price: Math.pow(1024, i) - 1
+            };
+        }
+
+        this.storages = storageObj;
     }
 }
 

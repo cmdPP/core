@@ -37,14 +37,6 @@ function loadCommands() {
                             availableCommands.push(`\t${cmdName}`);
                         }
                     }
-                    // var cmdList = availableCommands.join("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                    // var cmdList = availableCommands.join("\n\t");
-                    // this.respond("########################################");
-                    // this.respond('List of commands:');
-                    // this.respond(cmdList);
-                    // this.respond(" ");
-                    // this.respond("For specific command help type 'help [command]'");
-                    // this.respond("########################################");
                     var responseList = [
                         "########################################",
                         "List of commands",
@@ -81,6 +73,7 @@ function loadCommands() {
                     money: this.money,
                     increment: this.increment,
                     autoIncrement: this.autoIncrement,
+                    storage: this.storage,
                     unlocked: []
                 };
                 for (var cmdName in this._commands) {
@@ -97,12 +90,20 @@ function loadCommands() {
             price: 0
         },
         autoMine: {
-            func: () => {
-                this.autoIncrement = 1;
-                this.respond(`Automatic mining beginning at a rate of ${this.autoIncrement} byte per second.`);
+            func: (light) => {
+                if (light === "start" && !this.checkStorage()) {
+                    this.isAutoMining = true;
+                    this.respond(`Automatic mining beginning at a rate of ${this.autoIncrement} byte per second.`);
+                } else if (light === "stop") {
+                    this.isAutoMining = false;
+                    this.respond("Automatic mining has stopped.");
+                } else {
+                    this.respond("Unrecognized parameter.");
+                    this.command("help autoMine");
+                }
             },
             desc: "Every second, increments your data by the auto increment amount. Default is 1 byte per second.",
-            usage: "autoMine",
+            usage: "autoMine [start|stop]",
             unlocked: false,
             price: 20
         },
@@ -202,13 +203,15 @@ function loadCommands() {
                 //     return;
                 // }
                 var previousSave = true;
+                if (!loadData) {
+                    previousSave = false;
+                }
                 for (var k in loadData) {
                     if (loadData[k] === null) {
                         previousSave = false;
                         break;
                     }
                 }
-                console.log(previousSave);
                 if (previousSave) {
                     console.log(loadData);
                     this.data = loadData.data;
@@ -222,6 +225,7 @@ function loadCommands() {
                 } else {
                     this.respond("No save found.");
                 }
+                this.update();
             },
             desc: "Loads previously saved games.",
             usage: "load",
@@ -241,6 +245,63 @@ function loadCommands() {
             },
             desc: "Prints a read-out sampling some collected data.",
             usage: "sampleData",
+            unlocked: true,
+            price: 0
+        },
+        upgradeStorage: {
+            func: (tStorName) => {
+                if (tStorName) {
+                    if (tStorName === this.storage) {
+                        this.respond("This storage has already been unlocked.");
+                        return;
+                    }
+                    if (tStorName in this.storages) {
+                        var target = this.storages[tStorName];
+                        if (target.capacity < this.storages[this.storage].capacity) {
+                            this.respond(`You possess storage with a capacity greater than "${tStorName}"`);
+                        }
+                        if (this.money >= target.price) {
+                            this.removeMoney(target.price);
+                            this.storage = tStorName;
+                            this.respond(`Storage upgraded to: ${tStorName}`, `New capacity: ${this.formatter(target.capacity)}`);
+                        } else {
+                            this.respond("You do not have enough money to purchase this upgrade.");
+                        }
+                    } else {
+                        this.respond("Storage does not exist.");
+                    }
+                } else {
+                    this.command("help upgradeStorage");
+                }
+            },
+            desc: "Upgrades your storage capacity.",
+            usage: "upgradeStorage [storage]",
+            unlocked: true,
+            price: 0
+        },
+        currentStorage: {
+            func: () => {
+                var stor = this.storages[this.storage];
+                this.respond(...['Your current storage is:', `\tName: ${this.storage}`, `\tCapacity: ${stor.capacity}`]);
+            },
+            desc: "Responds with your current storage.",
+            usage: "currentStorage",
+            unlocked: true,
+            price: 0
+        },
+        upgradeMine: {
+            func: () => {
+                var currentCost = Math.floor((this.increment + 1) * 1.5);
+                if (this.money >= currentCost) {
+                    this.money -= currentCost;
+                    this.increment++;
+                    this.respond(`mineData upgraded to increment {${this.increment}} for {$${currentCost}}`);
+                } else {
+                    this.respond("You do not have enough money to purchase this upgrade.");
+                }
+            },
+            desc: "Upgrades your mining power.",
+            usage: "upgradeMine",
             unlocked: true,
             price: 0
         }
