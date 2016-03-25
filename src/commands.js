@@ -91,7 +91,7 @@ function loadCommands() {
         },
         autoMine: {
             func: (light) => {
-                if (light === "start" && !this.checkStorage()) {
+                if (light === "start" && this.checkStorage()) {
                     this.isAutoMining = true;
                     this.respond(`Automatic mining beginning at a rate of ${this.autoIncrement} byte per second.`);
                 } else if (light === "stop") {
