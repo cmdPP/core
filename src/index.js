@@ -31,6 +31,7 @@ class CMD {
         this.saveFunc = options.save;
         this.loadFunc = options.load;
         this.updateFunc = options.update;
+        this.loadStorage();
         this.loadCommands();
 
         this.command("load");
@@ -147,7 +148,7 @@ class CMD {
         return filesize(size);
     }
 
-    getStorage() {
+    loadStorage() {
         var storages = [
             'selectronTube',
             'floppyDisk',
