@@ -304,6 +304,16 @@ function loadCommands() {
             usage: "upgradeMine",
             unlocked: true,
             price: 0
+        },
+        reset: {
+            func: () => {
+                this.respond("Resetting all progress.");
+                this.reset();
+            },
+            desc: "Resets all progress.",
+            usage: "reset",
+            unlocked: true,
+            price: 0
         }
         // cheat: {
         //     func: () => {

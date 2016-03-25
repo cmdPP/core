@@ -9,7 +9,8 @@ class CMD {
             },
             save: (cmdData) => console.warn('No save function has been set.'),
             load: () => console.warn('No load function has been set.'),
-            update: (cmdObj) => console.warn('No update function has been set.')
+            update: (cmdObj) => console.warn('No update function has been set.'),
+            reset: () => console.warn('No reset function has been set.')
         };
         var options = Object.assign({}, defaults, opts);
         this.loadCommands = loadCMDs;
@@ -31,6 +32,7 @@ class CMD {
         this.saveFunc = options.save;
         this.loadFunc = options.load;
         this.updateFunc = options.update;
+        this.resetFunc = options.reset;
         this.loadStorage();
         this.loadCommands();
 
@@ -177,6 +179,10 @@ class CMD {
         }
 
         this.storages = storageObj;
+    }
+
+    reset() {
+        this.resetFunc();
     }
 }
 
