@@ -140,7 +140,7 @@ class CMD {
     }
 
     formatBytes() {
-        return formatter(this.data);
+        return this.formatter(this.data);
     }
 
     formatter(size) {
