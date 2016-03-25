@@ -332,12 +332,26 @@ function loadCommands() {
             // desc: "Upgrades your storage capacity.",
             desc: () => {
                 var storList = [];
-                for (var storName in this.storages) {
+                var storNames = Object.keys(this.storages);
+                var longName = storNames.sort((a, b) => b.length - a.length)[0].length;
+                var longCap = storNames.sort((a, b) => {
+                    var bCap = this.formatter(this.storages[b].capacity).length;
+                    var aCap = this.formatter(this.storages[a].capacity).length;
+                    return bCap - aCap;
+                });
+                for (var storName in storNames) {
                     var storage = this.storages[storName];
                     if (this.storage === storName) {
                         storName = "* "+storName;
                     }
-                    storList.push(`\t${storName}\t|\t${storage.capacity}\t|\t${storage.price}|`);
+                    var capacity = this.formatter(storage.capacity);
+                    var nameSpacing = new Array((longName - storName.length) + 1).join(' ');
+                    var capSpacing = new Array((longCap - capacity.length) + 1).join(' ');
+                    storList.push([
+                        `\t${storName}${nameSpacing}`,
+                        `${capacity}${capSpacing}`,
+                        `${storage.price}`
+                    ].join("\t|\t"));
                 }
                 return [
                     'Upgrades your storage capacity.',
