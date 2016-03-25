@@ -297,7 +297,7 @@ function loadCommands() {
                     this.increment++;
                     this.respond(`mineData upgraded to increment {${this.increment}} for {$${currentCost}}`);
                 } else {
-                    this.respond("You do not have enough money to purchase this upgrade.");
+                    this.respond(`You require $${currentCost} to purchase this upgrade.`);
                 }
             },
             desc: "Upgrades your mining power.",

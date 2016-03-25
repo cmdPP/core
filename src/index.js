@@ -15,7 +15,7 @@ class CMD {
         this.loadCommands = loadCMDs;
         this.money = 0;
         this.increment = 1;
-        this.autoIncrement = 0;
+        this.autoIncrement = 1;
         this.isAutoMining = false;
         this.storage = "selectronTube";
         this.historyBufferEnabled = true;
