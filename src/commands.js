@@ -339,7 +339,7 @@ function loadCommands() {
                     var aCap = this.formatter(this.storages[a].capacity).length;
                     return bCap - aCap;
                 });
-                for (var storName in storNames) {
+                for (var storName in this.storages) {
                     var storage = this.storages[storName];
                     if (this.storage === storName) {
                         storName = "* "+storName;
