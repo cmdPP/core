@@ -1,3 +1,5 @@
+/* jshint -W086 */
+
 import { Name } from 'charlatan';
 import Moniker from 'moniker';
 
@@ -108,8 +110,31 @@ function loadCommands() {
             price: 20
         },
         sellData: {
-            func: (amt) => {
+            func: (amt, unit = "B") => {
                 if (amt) {
+                    switch (unit) {
+                        case "YB":
+                            amt *= 1024;
+                        case "ZB":
+                            amt *= 1024;
+                        case "EB":
+                            amt *= 1024;
+                        case "PB":
+                            amt *= 1024;
+                        case "TB":
+                            amt *= 1024;
+                        case "GB":
+                            amt *= 1024;
+                        case "MB":
+                            amt *= 1024;
+                        case "KB":
+                            amt *= 1024;
+                            break;
+                        case "B":
+                            break;
+                        default:
+                            this.respond("Unrecognized byte size.");
+                    }
                     // amt = Number(amt);
                     if (this.data >= amt && this.data >= 100 && typeof amt !== "number") {
                         var loss = Math.floor(Math.random() * 15 + 10);
@@ -135,8 +160,33 @@ function loadCommands() {
             price: 250
         },
         buyData: {
-            func: (amt) => {
+            func: (amt, unit = "B") => {
                 if (amt) {
+
+                    switch (unit) {
+                        case "YB":
+                            amt *= 1024;
+                        case "ZB":
+                            amt *= 1024;
+                        case "EB":
+                            amt *= 1024;
+                        case "PB":
+                            amt *= 1024;
+                        case "TB":
+                            amt *= 1024;
+                        case "GB":
+                            amt *= 1024;
+                        case "MB":
+                            amt *= 1024;
+                        case "KB":
+                            amt *= 1024;
+                            break;
+                        case "B":
+                            break;
+                        default:
+                            this.respond("Unrecognized byte size.");
+                    }
+
                     var cost = amt * 2;
                     if (this.money >= cost && typeof amt !== "number") {
                         // this.money -= cost;

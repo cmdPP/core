@@ -52,10 +52,10 @@ class CMD {
                 if (this.checkStorage()) {
                     this.addData(this.autoIncrement);
                 } else {
-                    this.update();
                     this.respond("Please upgrade your storage with upgradeStorage");
                     this.command("autoMine stop");
                 }
+                this.update();
             }
         }, 1000);
 
