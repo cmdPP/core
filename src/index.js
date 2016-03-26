@@ -2,6 +2,7 @@
 
 import filesize from 'filesize';
 import { loadCommands as loadCMDs } from './commands';
+import pJSON from '../package.json';
 
 /** Class representing the game object. */
 class CMD {
@@ -89,6 +90,9 @@ class CMD {
             commandProvider: function() {}
         };
         var options = Object.assign({}, defaults, opts);
+
+        this.version = pJSON.version;
+
         this.loadCommands = loadCMDs;
         this.commandProvider = options.commandProvider;
         this.money = 0;
