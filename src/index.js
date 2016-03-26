@@ -115,7 +115,7 @@ class CMD {
         this.errHandlerFunc = options.funcs.errorHandler;
         this.loadStorage();
         this.loadCommands();
-        var customCommands = this.commandProvider;
+        var customCommands = this.commandProvider();
         Object.assign(this._commands, customCommands);
 
         this.command("load");
