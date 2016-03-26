@@ -171,6 +171,9 @@ class CMD {
     }
 
     runCommand(cmd) {
+        if (this.debug) {
+            console.log("Command:", cmd);
+        }
         if (cmd.indexOf(" ") !== -1 && cmd[cmd.indexOf(" ") + 1] === undefined) {
             this.respond("Command not found.");
             console.log('Command not found.');

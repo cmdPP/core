@@ -56,8 +56,12 @@ function loadCommands() {
         },
         mineData: {
             func: () => {
-                this.respond("Data mined.");
-                this.addData(this.increment);
+                if (this.checkStorage()) {
+                    this.respond("Data mined.");
+                    this.addData(this.increment);
+                } else {
+                    this.respond("Your storage is full. Please upgrade storage to continue.");
+                }
             },
             desc: "Increments data by your increment amount. The default is 1 byte.",
             unlocked: true
@@ -90,9 +94,13 @@ function loadCommands() {
         },
         autoMine: {
             func: (light) => {
-                if (light === "start" && this.checkStorage()) {
-                    this.isAutoMining = true;
-                    this.respond(`Automatic mining beginning at a rate of ${this.autoIncrement} byte per second.`);
+                if (light === "start") {
+                    if (this.checkStorage()) {
+                        this.isAutoMining = true;
+                        this.respond(`Automatic mining beginning at a rate of ${this.autoIncrement} byte per second.`);
+                    } else {
+                        this.respond("Your storage is full. Please upgrade storage to continue.")
+                    }
                 } else if (light === "stop") {
                     this.isAutoMining = false;
                     this.respond("Automatic mining has stopped.");
@@ -369,6 +377,13 @@ function loadCommands() {
                 this.reset();
             },
             desc: "Resets all progress.",
+            unlocked: true
+        },
+        version: {
+            func: () => {
+                this.respond(`v${this.version}`);
+            },
+            desc: "Displays the current version.",
             unlocked: true
         }
         // cheat: {
