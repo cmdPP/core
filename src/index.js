@@ -1,19 +1,96 @@
+/*eslint no-console: 0*/
+
 import filesize from 'filesize';
 import { loadCommands as loadCMDs } from './commands';
 
+/** Class representing the game object. */
 class CMD {
+
+    /**
+     * Function to handle responses from the CMD object.
+     * @name respond
+     * @function
+     * @param {...*} txt - Responses
+     */
+
+    /**
+     * Function to handle saving progress.
+     * @name save
+     * @function
+     * @param {Object} cmdData - Game progress to be saved.
+     * @param {Number} cmdData.data - Data collected.
+     * @param {Number} cmdData.money - Money collected.
+     * @param {Number} cmdData.increment - Increment value for mineData.
+     * @param {Number} cmdData.autoIncrement - Increment value for autoMine.
+     * @param {String} cmdData.storage - Current storage value.
+     * @param {String[]} cmdData.unlocked - Commands bought with buyCommand.
+     * @return {Error} An error if encountered.
+     */
+
+    /**
+     * Function to handle loading progress.
+     * @name load
+     * @function
+     * @return {Object} Game progress loaded from save.
+     */
+
+    /**
+     * Function to handle updating game values.
+     * @name update
+     * @function
+     * @param {CMD} cmdObj - CMD object.
+     */
+
+    /**
+     * Function to handle resetting game progress.
+     * @name reset
+     * @function
+     */
+
+    /**
+     * Function to handle thrown errors.
+     * @name errorHandler
+     * @function
+     * @param {Error} err - Error thrown.
+     */
+
+    /**
+     * Function to provide custom commands.
+     * @name commandProvider
+     * @function
+     * @returns {Object} Object of custom commands.
+
+    /**
+     * Instantiate the CMD object
+     * @constructor
+     * @param {Object} opts - Options
+     * @param {Boolean} [opts.debug=false] - Debug mode.
+     * @param {Object} opts.funcs - Object containing functions to be used by CMD.
+     * @param {respond} opts.funcs.respond - Function for responding.
+     * @param {save} opts.funcs.save - Function for saving.
+     * @param {load} opts.funcs.load - Function for loading.
+     * @param {update} opts.funcs.update - Function for updating.
+     * @param {reset} opts.funcs.reset - Function for resetting.
+     * @param {errorHandler} opts.errorHandler - Function for error handling.
+     * @param {commandProvider} [commandProvider] - Function to provide custom commands Cannot be ES6 arrow function.
+     */
     constructor(opts) {
         var defaults = {
-            respond: (...txt) => {
-                console.log(...txt);
+            debug: false,
+            funcs: {
+                respond: (...txt) => console.log(...txt),
+                save: () => console.warn('No save function has been set.'),
+                load: () => console.warn('No load function has been set.'),
+                update: () => console.warn('No update function has been set.'),
+                reset: () => console.warn('No reset function has been set.'),
+                errorHandler: (e) => console.error(e)
             },
-            save: (cmdData) => console.warn('No save function has been set.'),
-            load: () => console.warn('No load function has been set.'),
-            update: (cmdObj) => console.warn('No update function has been set.'),
-            reset: () => console.warn('No reset function has been set.')
+            errorHandler: (e) => console.error(e),
+            commandProvider: function() {}
         };
         var options = Object.assign({}, defaults, opts);
         this.loadCommands = loadCMDs;
+        this.commandProvider = options.commandProvider;
         this.money = 0;
         this.increment = 1;
         this.autoIncrement = 1;
@@ -28,13 +105,18 @@ class CMD {
         this.data = 0;
         this.counter = 0;
 
-        this.respondFunc = options.respond;
-        this.saveFunc = options.save;
-        this.loadFunc = options.load;
-        this.updateFunc = options.update;
-        this.resetFunc = options.reset;
+        this.debug = options.debug;
+
+        this.respondFunc = options.funcs.respond;
+        this.saveFunc = options.funcs.save;
+        this.loadFunc = options.funcs.load;
+        this.updateFunc = options.funcs.update;
+        this.resetFunc = options.funcs.reset;
+        this.errHandlerFunc = options.funcs.errorHandler;
         this.loadStorage();
         this.loadCommands();
+        var customCommands = this.commandProvider;
+        Object.assign(this._commands, customCommands);
 
         this.command("load");
         this.gameLoopInterval = undefined;
@@ -85,23 +167,6 @@ class CMD {
     }
 
     runCommand(cmd) {
-        // if (cmd.indexOf(" ") !== -1 && cmd[cmd.indexOf(" ") + 1] === undefined) {
-        //     this.respond("Command not found.");
-        //     console.log('Command not found.');
-        // } else {
-        //     var cmdWArgs = cmd.split(" ");
-        //     if (this.commandList.indexOf(cmdWArgs[0]) === -1) {
-        //         this.respond("Command not found.");
-        //     } else {
-        //         console.log(cmdWArgs);
-        //         var cmdIndex = this.commandList.indexOf(cmdWArgs[0]);
-        //         if (this.commandUnlocked[cmdIndex]) {
-        //             this.commands(...cmdWArgs);
-        //         } else {
-        //             this.respond("Command locked. Use buyCommand to unlock new commands.");
-        //         }
-        //     }
-        // }
         if (cmd.indexOf(" ") !== -1 && cmd[cmd.indexOf(" ") + 1] === undefined) {
             this.respond("Command not found.");
             console.log('Command not found.');

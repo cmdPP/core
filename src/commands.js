@@ -1,35 +1,34 @@
-/* jshint -W086 */
-
 import { Name } from 'charlatan';
 import Moniker from 'moniker';
 
 function loadCommands() {
     this._commands = {
         help: {
-            func: (toHelp) => {
-                if (toHelp) {
-                    if (!(toHelp in this._commands)) {
+            func: (subject) => {
+                if (subject) {
+                    if (!(subject in this._commands)) {
                         this.respond("Command not found or no help is available. Type 'help' with no arguments to see a list of commands.");
                         return;
                     }
-                    let { desc, usage } = this._commands[toHelp];
-                    desc = (typeof desc === "function" ? desc() : desc);
-                    usage = (typeof usage === "function" ? usage() : usage);
-                    if (Array.isArray(desc)) {
-                        // this.respond(`${toHelp}:`, desc[0]);
-                        // this.respond("To use:", `${toHelp},`, usage);
-                        // this.respond('');
-                        this.respond(`${toHelp}: ${desc[0]}`, `To use: ${usage}\n\n`, ...desc.slice(1));
-                        // this.respond(`To use: ${usage}\n`);
-                        // for (var resp of desc.slice(1)) {
-                        //     this.respond(resp);
-                        // }
-                        // this.respond(...desc.slice(1));
+                    // let { desc, usage } = this._commands[subject];
+                    let cmd = this._commands[subject];
+                    let { desc, usage } = cmd;
+                    if (!usage) {
+                        usage = subject;
+                        let usageParams = cmd.func.toString().match(/\(.*?\)/)[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',');
+                        if (usageParams.length > 0 && usageParams[0] !== "") {
+                            for (let paramName of usageParams) {
+                                usage += ` ${paramName}`;
+                            }
+                        }
                     } else {
-                        // this.respond(`${toHelp}:`, desc);
-                        // this.respond("To use:", `${toHelp},`, usage);
-                        this.respond(`${toHelp}: ${desc}`, `To use: ${usage}`);
-                        // this.respond(`To use: ${usage}`);
+                        usage = (typeof usage === "function" ? usage() : usage);
+                    }
+                    desc = (typeof desc === "function" ? desc() : desc);
+                    if (Array.isArray(desc)) {
+                        this.respond(`${subject}: ${desc[0]}`, `To use: ${usage}\n\n`, ...desc.slice(1));
+                    } else {
+                        this.respond(`${subject}: ${desc}`, `To use: ${usage}`);
                     }
                 } else {
                     var availableCommands = [];
@@ -47,15 +46,13 @@ function loadCommands() {
                     responseList.push(...availableCommands);
                     responseList.push(...[
                         '\nFor specific command help type "help [command]"',
-                        "########################################",
+                        "########################################"
                     ]);
                     this.respond(...responseList);
                 }
             },
             desc: "Gives list of commands or specific instructions for commands.",
-            usage: "help [command]",
-            unlocked: true,
-            price: 0
+            unlocked: true
         },
         mineData: {
             func: () => {
@@ -63,13 +60,10 @@ function loadCommands() {
                 this.addData(this.increment);
             },
             desc: "Increments data by your increment amount. The default is 1 byte.",
-            usage: "mineData",
-            unlocked: true,
-            price: 0
+            unlocked: true
         },
         save: {
             func: () => {
-                // this.saveFunc(this);
                 var saveObj = {
                     data: this.data,
                     money: this.money,
@@ -80,16 +74,19 @@ function loadCommands() {
                 };
                 for (var cmdName in this._commands) {
                     var cmd = this._commands[cmdName];
-                    if (cmd.price !== 0 && cmd.unlocked) {
+                    if ('price' in cmd && cmd.price !== 0 && cmd.unlocked) {
                         saveObj.unlocked.push(cmdName);
                     }
                 }
-                this.saveFunc(saveObj);
+                // this.saveFunc(saveObj);
+                try {
+                    this.saveFunc(saveObj);
+                } catch (e) {
+                    this.errHandlerFunc(e);
+                }
             },
             desc: "Saves progress.",
-            usage: "save",
-            unlocked: true,
-            price: 0
+            unlocked: true
         },
         autoMine: {
             func: (light) => {
@@ -105,7 +102,7 @@ function loadCommands() {
                 }
             },
             desc: "Every second, increments your data by the auto increment amount. Default is 1 byte per second.",
-            usage: "autoMine [start|stop]",
+            usage: "autoMine (start | stop)",
             unlocked: false,
             price: 20
         },
@@ -159,13 +156,13 @@ function loadCommands() {
                 }
             },
             desc: "Converts data to money. The conversion is 1 byte for $1, but the data deteriorates during transfer.",
-            usage: "sellData [amount] {unit}",
+            usage: "sellData amount [unit]",
             unlocked: false,
             price: 250
         },
         buyData: {
             func: (amt, unit = "B") => {
-                if (amt && !isNan(amt)) {
+                if (amt && !isNaN(amt)) {
                     amt = parseInt(amt);
                     switch (unit) {
                         case "YB":
@@ -207,7 +204,7 @@ function loadCommands() {
                 }
             },
             desc: "Converts money to data. The conversion is 1 byte for $2.",
-            usage: "buyData [amount] {unit}",
+            usage: "buyData amount [unit]",
             unlocked: false,
             price: 150
         },
@@ -238,17 +235,13 @@ function loadCommands() {
                         cmdList.push(`\t${cmdName}: ${cmd.price}`);
                     }
                 }
-                // this.respond("Purchases and unlocks a command.");
-                // this.respond("Available commands:\n\t", cmdList.join("\n\t"));
                 return [
                     "Purchases and unlocks a command.",
                     "Available commands:",
                     ...cmdList
                 ];
             },
-            usage: "buyCommand [command]",
-            unlocked: true,
-            price: 0
+            unlocked: true
         },
         load: {
             func: () => {
@@ -283,9 +276,7 @@ function loadCommands() {
                 this.update();
             },
             desc: "Loads previously saved games.",
-            usage: "load",
-            unlocked: true,
-            price: 0
+            unlocked: true
         },
         sampleData: {
             func: () => {
@@ -299,26 +290,24 @@ function loadCommands() {
                 }
             },
             desc: "Prints a read-out sampling some collected data.",
-            usage: "sampleData",
-            unlocked: true,
-            price: 0
+            unlocked: true
         },
         upgradeStorage: {
-            func: (tStorName) => {
-                if (tStorName) {
-                    if (tStorName === this.storage) {
+            func: (targetStorage) => {
+                if (targetStorage) {
+                    if (targetStorage === this.storage) {
                         this.respond("This storage has already been unlocked.");
                         return;
                     }
-                    if (tStorName in this.storages) {
-                        var target = this.storages[tStorName];
+                    if (targetStorage in this.storages) {
+                        var target = this.storages[targetStorage];
                         if (target.capacity < this.storages[this.storage].capacity) {
-                            this.respond(`You possess storage with a capacity greater than "${tStorName}"`);
+                            this.respond(`You possess storage with a capacity greater than "${targetStorage}"`);
                         }
                         if (this.money >= target.price) {
                             this.removeMoney(target.price);
-                            this.storage = tStorName;
-                            this.respond(`Storage upgraded to: ${tStorName}`, `New capacity: ${this.formatter(target.capacity)}`);
+                            this.storage = targetStorage;
+                            this.respond(`Storage upgraded to: ${targetStorage}`, `New capacity: ${this.formatter(target.capacity)}`);
                         } else {
                             this.respond("You do not have enough money to purchase this upgrade.");
                         }
@@ -350,9 +339,7 @@ function loadCommands() {
                     ...storList
                 ];
             },
-            usage: "upgradeStorage [storage]",
-            unlocked: true,
-            price: 0
+            unlocked: true
         },
         currentStorage: {
             func: () => {
@@ -360,9 +347,7 @@ function loadCommands() {
                 this.respond(...['Your current storage is:', `\tName: ${this.storage}`, `\tCapacity: ${stor.capacity}`]);
             },
             desc: "Responds with your current storage.",
-            usage: "currentStorage",
-            unlocked: true,
-            price: 0
+            unlocked: true
         },
         upgradeMine: {
             func: () => {
@@ -376,9 +361,7 @@ function loadCommands() {
                 }
             },
             desc: "Upgrades your mining power.",
-            usage: "upgradeMine",
-            unlocked: true,
-            price: 0
+            unlocked: true
         },
         reset: {
             func: () => {
@@ -386,9 +369,7 @@ function loadCommands() {
                 this.reset();
             },
             desc: "Resets all progress.",
-            usage: "reset",
-            unlocked: true,
-            price: 0
+            unlocked: true
         }
         // cheat: {
         //     func: () => {
@@ -396,13 +377,21 @@ function loadCommands() {
         //     },
         //     desc: "For testing purposes.",
         //     usage: "cheat",
-        //     unlocked: true,
-        //     price: 0
+        //     unlocked: true
         // }
     };
 
     if (Name === undefined || Moniker === undefined) {
         delete this._commands.sampleData;
+    }
+    if (this.debug) {
+        this._commands.cheat = {
+            func: () => {
+                this.addData(10000);
+            },
+            desc: "For testing purposes.",
+            unlocked: true
+        };
     }
 }
 

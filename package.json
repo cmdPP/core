@@ -17,6 +17,7 @@
     "browserify": "^13.0.0",
     "chai": "^3.5.0",
     "del": "^2.2.0",
+    "eslint": "^2.5.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-load-plugins": "^1.2.0",
