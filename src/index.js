@@ -178,7 +178,9 @@ class CMD {
         }
         if (cmd.indexOf(" ") !== -1 && cmd[cmd.indexOf(" ") + 1] === undefined) {
             this.respond("Command not found.");
-            console.log('Command not found.');
+            if (this.debug) {
+                console.log('Command not found.');
+            }
         } else {
             var cmdWArgs = cmd.split(' ');
             if (!(cmdWArgs[0] in this._commands)) {
@@ -205,7 +207,7 @@ class CMD {
             storage: this.storage,
             unlocked: []
         };
-        for (var cmdName in this._commands) {
+        for (let cmdName in this._commands) {
             var cmd = this._commands[cmdName];
             if ('price' in cmd && cmd.price !== 0 && cmd.unlocked) {
                 saveObj.unlocked.push(cmdName);
@@ -228,14 +230,24 @@ class CMD {
             }
         }
         if (previousSave) {
-            console.log(loadData);
+            if (this.debug) {
+                console.log(loadData);
+            }
             this.data = loadData.data;
             this.money = loadData.money;
             this.increment = loadData.increment;
             this.autoIncrement = loadData.autoIncrement;
-            for (var unlockedCMD of loadData.unlocked) {
-                this._commands[unlockedCMD].unlocked = true;
+            for (let cmdName in this._commands) {
+                var cmd = this._commands[cmdName];
+                if (loadData.unlocked.indexOf(cmdName) === -1 && 'price' in cmd && cmd.price !== 0) {
+                    this._commands[cmdName].unlocked = false;
+                } else {
+                    this._commands[cmdName].unlocked = true;
+                }
             }
+            // for (var unlockedCMD of loadData.unlocked) {
+            //     this._commands[unlockedCMD].unlocked = true;
+            // }
             this.respond("Save loaded.");
         } else {
             this.respond("No save found.");

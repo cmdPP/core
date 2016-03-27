@@ -142,8 +142,10 @@ function loadCommands() {
                         default:
                             this.respond("Unrecognized byte size.");
                     }
-                    console.log('Sell Data Unit:', unit);
-                    console.log('Sell Data Amount:', amt);
+                    if (this.debug) {
+                        console.log('Sell Data Unit:', unit);
+                        console.log('Sell Data Amount:', amt);
+                    }
                     // amt = Number(amt);
                     // if (this.data >= amt && this.data >= 100 && typeof amt !== "number") {
                     if (this.data >= amt && amt >= 100) {

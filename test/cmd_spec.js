@@ -17,7 +17,7 @@ import jsonfile from 'jsonfile';
 // });
 var responses = [];
 var cmd = new CMD({
-    debug: true,
+    debug: false,
     funcs: {
         respond: (...txt) => {responses.push(...txt)},
         save: (cmdData) => jsonfile.writeFileSync('test_save.json', cmdData, { spaces: 2 }),
@@ -55,9 +55,12 @@ describe('CMD', () => {
 
     it('resets a save', () => {
         cmd.data = 100;
+        cmd._commands.sellData.unlocked = true;
         expect(cmd.data).to.equal(100);
+        expect(cmd._commands.sellData.unlocked).to.equal(true);
         cmd.reset();
         expect(cmd.data).to.equal(0);
+        expect(cmd._commands.sellData.unlocked).to.equal(false);
     });
 
     it('loads a save', () => {
@@ -165,7 +168,7 @@ describe('CMD', () => {
         expect(cmd.autoIncrement).to.equal(1);
         expect(cmd.storage).to.equal('selectronTube');
         for (cmdName in cmd._commands) {
-            if (cmd._commands[cmdName].price !== 0) {
+            if ('price' in cmd._commands[cmdName] && cmd._commands[cmdName].price !== 0) {
                 expect(cmd._commands[cmdName].unlocked).to.equal(false);
             }
         }
