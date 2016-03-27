@@ -68,26 +68,27 @@ function loadCommands() {
         },
         save: {
             func: () => {
-                var saveObj = {
-                    data: this.data,
-                    money: this.money,
-                    increment: this.increment,
-                    autoIncrement: this.autoIncrement,
-                    storage: this.storage,
-                    unlocked: []
-                };
-                for (var cmdName in this._commands) {
-                    var cmd = this._commands[cmdName];
-                    if ('price' in cmd && cmd.price !== 0 && cmd.unlocked) {
-                        saveObj.unlocked.push(cmdName);
-                    }
-                }
-                // this.saveFunc(saveObj);
-                try {
-                    this.saveFunc(saveObj);
-                } catch (e) {
-                    this.errHandlerFunc(e);
-                }
+                // var saveObj = {
+                //     data: this.data,
+                //     money: this.money,
+                //     increment: this.increment,
+                //     autoIncrement: this.autoIncrement,
+                //     storage: this.storage,
+                //     unlocked: []
+                // };
+                // for (var cmdName in this._commands) {
+                //     var cmd = this._commands[cmdName];
+                //     if ('price' in cmd && cmd.price !== 0 && cmd.unlocked) {
+                //         saveObj.unlocked.push(cmdName);
+                //     }
+                // }
+                // // this.saveFunc(saveObj);
+                // try {
+                //     this.saveFunc(saveObj);
+                // } catch (e) {
+                //     this.errHandlerFunc(e);
+                // }
+                this.save();
             },
             desc: "Saves progress.",
             unlocked: true
@@ -253,35 +254,36 @@ function loadCommands() {
         },
         load: {
             func: () => {
-                var loadData = this.loadFunc();
-                // if () {
-                //     this.respond("No save found.");
-                //     return;
+                // var loadData = this.loadFunc();
+                // // if () {
+                // //     this.respond("No save found.");
+                // //     return;
+                // // }
+                // var previousSave = true;
+                // if (!loadData) {
+                //     previousSave = false;
                 // }
-                var previousSave = true;
-                if (!loadData) {
-                    previousSave = false;
-                }
-                for (var k in loadData) {
-                    if (loadData[k] === null) {
-                        previousSave = false;
-                        break;
-                    }
-                }
-                if (previousSave) {
-                    console.log(loadData);
-                    this.data = loadData.data;
-                    this.money = loadData.money;
-                    this.increment = loadData.increment;
-                    this.autoIncrement = loadData.autoIncrement;
-                    for (var unlockedCMD of loadData.unlocked) {
-                        this._commands[unlockedCMD].unlocked = true;
-                    }
-                    this.respond("Save loaded.");
-                } else {
-                    this.respond("No save found.");
-                }
-                this.update();
+                // for (var k in loadData) {
+                //     if (loadData[k] === null) {
+                //         previousSave = false;
+                //         break;
+                //     }
+                // }
+                // if (previousSave) {
+                //     console.log(loadData);
+                //     this.data = loadData.data;
+                //     this.money = loadData.money;
+                //     this.increment = loadData.increment;
+                //     this.autoIncrement = loadData.autoIncrement;
+                //     for (var unlockedCMD of loadData.unlocked) {
+                //         this._commands[unlockedCMD].unlocked = true;
+                //     }
+                //     this.respond("Save loaded.");
+                // } else {
+                //     this.respond("No save found.");
+                // }
+                // this.update();
+                this.load();
             },
             desc: "Loads previously saved games.",
             unlocked: true

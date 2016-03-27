@@ -42,11 +42,11 @@ class CMD {
      * @param {CMD} cmdObj - CMD object.
      */
 
-    /**
-     * Function to handle resetting game progress.
-     * @name reset
-     * @function
-     */
+    // /**
+    //  * Function to handle resetting game progress.
+    //  * @name reset
+    //  * @function
+    //  */
 
     /**
      * Function to handle thrown errors.
@@ -71,7 +71,7 @@ class CMD {
      * @param {save} opts.funcs.save - Function for saving.
      * @param {load} opts.funcs.load - Function for loading.
      * @param {update} opts.funcs.update - Function for updating.
-     * @param {reset} opts.funcs.reset - Function for resetting.
+    //  * @param {reset} opts.funcs.reset - Function for resetting.
      * @param {errorHandler} opts.errorHandler - Function for error handling.
      * @param {commandProvider} [commandProvider] - Function to provide custom commands Cannot be ES6 arrow function.
      */
@@ -83,7 +83,7 @@ class CMD {
                 save: () => console.warn('No save function has been set.'),
                 load: () => console.warn('No load function has been set.'),
                 update: () => console.warn('No update function has been set.'),
-                reset: () => console.warn('No reset function has been set.'),
+                // reset: () => console.warn('No reset function has been set.'),
                 errorHandler: (e) => console.error(e)
             },
             errorHandler: (e) => console.error(e),
@@ -122,7 +122,8 @@ class CMD {
         var customCommands = this.commandProvider();
         Object.assign(this._commands, customCommands);
 
-        this.command("load");
+        // this.command("load");
+        this.load();
         this.gameLoopInterval = undefined;
         this.gameLoop();
     }
@@ -132,7 +133,8 @@ class CMD {
             this.counter++;
             if (this.counter % 10 === 0) {
                 // this.command.save(false);
-                this.command("save");
+                // this.command("save");
+                this.save();
             }
             if (this.isAutoMining) {
                 if (this.checkStorage()) {
@@ -192,6 +194,53 @@ class CMD {
 
     update() {
         this.updateFunc(this);
+    }
+
+    save() {
+        var saveObj = {
+            data: this.data,
+            money: this.money,
+            increment: this.increment,
+            autoIncrement: this.autoIncrement,
+            storage: this.storage,
+            unlocked: []
+        };
+        for (var cmdName in this._commands) {
+            var cmd = this._commands[cmdName];
+            if ('price' in cmd && cmd.price !== 0 && cmd.unlocked) {
+                saveObj.unlocked.push(cmdName);
+            }
+        }
+        this.saveFunc(saveObj);
+    }
+
+    load() {
+        var loadData = this.loadFunc();
+
+        var previousSave = true;
+        if (!loadData) {
+            previousSave = false;
+        }
+        for (var k in loadData) {
+            if (loadData[k] === null) {
+                previousSave = false;
+                break;
+            }
+        }
+        if (previousSave) {
+            console.log(loadData);
+            this.data = loadData.data;
+            this.money = loadData.money;
+            this.increment = loadData.increment;
+            this.autoIncrement = loadData.autoIncrement;
+            for (var unlockedCMD of loadData.unlocked) {
+                this._commands[unlockedCMD].unlocked = true;
+            }
+            this.respond("Save loaded.");
+        } else {
+            this.respond("No save found.");
+        }
+        this.update();
     }
 
     addData(amt) {
@@ -254,7 +303,16 @@ class CMD {
     }
 
     reset() {
-        this.resetFunc();
+        this.saveFunc({
+            data: 0,
+            money: 0,
+            increment: 1,
+            autoIncrement: 1,
+            storage: "selectronTube",
+            unlocked: []
+        });
+
+        this.load();
     }
 }
 
