@@ -6,7 +6,7 @@ import browserify from 'browserify';
 import babel from 'babelify';
 import runSeq from 'run-sequence';
 import del from 'del';
-import pJSON from './package.json';
+// import pJSON from './package.json';
 
 var plugins = gLP();
 

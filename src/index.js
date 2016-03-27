@@ -42,17 +42,21 @@ class CMD {
      * @param {CMD} cmdObj - CMD object.
      */
 
-    // /**
-    //  * Function to handle resetting game progress.
-    //  * @name reset
-    //  * @function
-    //  */
-
     /**
      * Function to handle thrown errors.
      * @name errorHandler
      * @function
      * @param {Error} err - Error thrown.
+     */
+
+    /**
+     * An object representing a command.
+     * @typedef {Object} Command
+     * @property {Function} func - Function called when command is run.
+     * @property {String|Function} desc - Description for command.
+     * @property {String|Function} [usage] - How to use the command.
+     * @property {Boolean} unlocked - If the command is unlocked by default.
+     * @property {Number} [price] - Price to pay in bytes for command.
      */
 
     /**
@@ -64,18 +68,21 @@ class CMD {
     /**
      * Instantiate the CMD object
      * @constructor
-     * @param {Object} opts - Options
+     * @param {Object} options - Options
      * @param {Boolean} [opts.debug=false] - Debug mode.
      * @param {Object} opts.funcs - Object containing functions to be used by CMD.
      * @param {respond} opts.funcs.respond - Function for responding.
      * @param {save} opts.funcs.save - Function for saving.
      * @param {load} opts.funcs.load - Function for loading.
      * @param {update} opts.funcs.update - Function for updating.
-    //  * @param {reset} opts.funcs.reset - Function for resetting.
      * @param {errorHandler} opts.errorHandler - Function for error handling.
      * @param {commandProvider} [commandProvider] - Function to provide custom commands Cannot be ES6 arrow function.
+     * @example
+     * ```js
+     * const CMD = require('cmdpp-core').CMD;
+     *
      */
-    constructor(opts) {
+    constructor(options) {
         var defaults = {
             debug: false,
             funcs: {
@@ -89,7 +96,8 @@ class CMD {
             errorHandler: (e) => console.error(e),
             commandProvider: function() {}
         };
-        var options = Object.assign({}, defaults, opts);
+        var opts = Object.assign({}, defaults, options);
+        options = opts;
 
         this.version = pJSON.version;
 
@@ -108,6 +116,7 @@ class CMD {
         this.dataShow = 0;
         this.data = 0;
         this.counter = 0;
+
 
         this.debug = options.debug;
 
@@ -128,36 +137,58 @@ class CMD {
         this.gameLoop();
     }
 
+    /**
+     * Start the game loop.
+     */
     gameLoop() {
-        this.gameLoopInterval = setInterval(() => {
-            this.counter++;
-            if (this.counter % 10 === 0) {
-                // this.command.save(false);
-                // this.command("save");
-                this.save();
-            }
-            if (this.isAutoMining) {
-                if (this.checkStorage()) {
-                    this.addData(this.autoIncrement);
-                } else {
-                    this.respond("Please upgrade your storage with upgradeStorage");
-                    this.command("autoMine stop");
+        if (this.gameLoopInterval === undefined) {
+            this.gameLoopInterval = setInterval(() => {
+                this.counter++;
+                if (this.counter % 10 === 0) {
+                    // this.command.save(false);
+                    // this.command("save");
+                    this.save();
                 }
-                this.update();
-            }
-        }, 1000);
-
-        return this.gameLoopInterval;
+                if (this.isAutoMining) {
+                    if (this.checkStorage(this.autoIncrement)) {
+                        this.addData(this.autoIncrement);
+                    } else {
+                        this.respond("Please upgrade your storage with upgradeStorage");
+                        this.command("autoMine stop");
+                    }
+                    this.update();
+                }
+            }, 1000);
+        } else {
+            console.error('Game loop has already been started.');
+        }
     }
 
+    /**
+     * Send response to respond function from constructor
+     * @param {...String} txt - Strings to be sent to respond function.
+     */
     respond(...txt) {
         this.respondFunc(...txt);
     }
 
-    checkStorage() {
-        return (this.data <= this.storages[this.storage].capacity);
+    /**
+     * Check if storage is full.
+     * @param {Number | Null} [increment] - Increment to check against. If null, equal to CMD#increment.
+     * @return {Boolean} If storage has enough space.
+     */
+    checkStorage(increment) {
+        if (increment === undefined) {
+            increment = this.increment;
+        }
+        // return (this.data <= this.storages[this.storage].capacity);
+        return ((this.data + increment) <= this.storages[this.storage].capacity);
     }
 
+    /**
+     * Run command
+     * @param {String} str - Command to be ran.
+     */
     command(str = "") {
         if (str !== "") {
             this.runCommand(str);
@@ -194,10 +225,16 @@ class CMD {
         }
     }
 
+    /**
+     * Run update function from constructor to update game values
+     */
     update() {
         this.updateFunc(this);
     }
 
+    /**
+     * Save game progress
+     */
     save() {
         var saveObj = {
             data: this.data,
@@ -216,6 +253,9 @@ class CMD {
         this.saveFunc(saveObj);
     }
 
+    /**
+     * Load game progress
+     */
     load() {
         var loadData = this.loadFunc();
 
@@ -255,34 +295,79 @@ class CMD {
         this.update();
     }
 
+    /**
+     * Add data
+     * @param {Number} amt - Amount to add.
+     * @return {Boolean} if data was able to be added.
+     */
     addData(amt) {
-        this.data += amt;
+        var hasRoom = false;
+        if (this.checkStorage(amt)) {
+            this.data += amt;
+            hasRoom = true;
+        }
         this.update();
+        return hasRoom;
     }
-
+    /**
+     * Remove data
+     * @param {Number} amt - Amount to remove.
+     * @return {Boolean} if data was able to be removed.
+     */
     removeData(amt) {
-        this.data -= amt;
+        var hasEnough = false;
+        if (this.data >= amt) {
+            this.data -= amt;
+            hasEnough = true;
+        }
         this.update();
+        return hasEnough;
     }
 
+    /**
+     * Add money
+     * @param {Number} amt - Amount to add.
+     */
     addMoney(amt) {
         this.money += amt;
         this.update();
     }
 
+    /**
+     * Remove money
+     * @param {Number} amt - Amount to remove.
+     * @return {Boolean} if money was able to be removed.
+     */
     removeMoney(amt) {
-        this.money -= amt;
+        var hasEnough = false;
+        if (this.money >= amt) {
+            this.money -= amt;
+            hasEnough = true;
+        }
         this.update();
+        return hasEnough;
     }
 
+    /**
+     * Format bytes into a human-readable format
+     * @return CMD#data in human-readable format
+     */
     formatBytes() {
         return this.formatter(this.data);
     }
 
+    /**
+     * Format number into a human-readable format
+     * @param {Number} size - Number to be formatted.
+     * @return size in human-readable format
+     */
     formatter(size) {
         return filesize(size);
     }
 
+    /**
+     * Load storage options
+     */
     loadStorage() {
         var storages = [
             'selectronTube',
@@ -314,6 +399,9 @@ class CMD {
         this.storages = storageObj;
     }
 
+    /**
+     * Reset game progress
+     */
     reset() {
         this.saveFunc({
             data: 0,
@@ -323,7 +411,6 @@ class CMD {
             storage: "selectronTube",
             unlocked: []
         });
-
         this.load();
     }
 }
