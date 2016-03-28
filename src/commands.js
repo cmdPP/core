@@ -1,6 +1,3 @@
-// import { Name } from 'charlatan';
-// import Moniker from 'moniker';
-
 function loadCommands() {
     this._commands = {
         help: {
