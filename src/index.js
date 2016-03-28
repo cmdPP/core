@@ -97,15 +97,8 @@ class CMD {
         this.autoIncrement = 1;
         this.isAutoMining = false;
         this.storage = "selectronTube";
-        // this.historyBufferEnabled = true;
-        // this.historyBuffer = [];
-        // this.historyBufferCurrentIdx = -1;
-        // this.historyLastDirection = null;
-        // this.unit = "byte";
-        // this.dataShow = 0;
         this.data = 0;
         this.counter = 0;
-
 
         this.debug = options.debug;
 
@@ -395,6 +388,7 @@ class CMD {
             };
         }
 
+        this.storageArr = storages;
         this.storages = storageObj;
     }
 

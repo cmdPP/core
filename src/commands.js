@@ -329,6 +329,64 @@ function loadCommands() {
                 this.respond(`v${this.version}`);
             },
             desc: "Displays the current version."
+        },
+        upgrade: {
+            func: (command) => {
+                if (command === "mineData") {
+                    var currentCost = Math.floor((this.increment + 1) * 1.5);
+                    if (this.removeMoney(currentCost)) {
+                        // this.money -= currentCost;
+                        this.increment++;
+                        this.respond(`mineData upgraded to increment {${this.increment}} for {$${currentCost}}.`);
+                    } else {
+                        this.respond(`You require $${currentCost} to purchase this upgrade.`);
+                    }
+                } else if (command === "storage") {
+                    // var targetStorage = this.storageArr[this.storageArr.indexOf(this.storage) + 1];
+                    var currentStor = this.storageArr.indexOf(this.storage);
+                    if (currentStor >= this.storageArr.length) {
+                        this.respond("You already have the largest storage capacity.");
+                        return;
+                    }
+                    var targetStorage = this.storageArr[currentStor + 1];
+                    var target = this.storages[targetStorage];
+                    if (this.removeMoney(target.price)) {
+                        this.storage = targetStorage;
+                        // this.respond(`Storage upgraded to: ${targetStorage}`, `New capacity: ${this.formatter(target.capacity)}`);
+                        this.respond(`Storage upgraded to {${targetStorage}} for {$${target.price}}`,
+                            `New capacity: {${this.formatter(target.capacity)}}`);
+                    } else {
+                        this.respond(`You require $${target.price} to purhcase this upgrade.`)
+                    }
+                } else {
+                    this.respond(`Command "${command}" either does not exist or cannot be upgraded.`);
+                }
+            },
+            desc: () => {
+                var response = [];
+                var incrementValue = this.increment + 1;
+                var incrementCost = Math.floor(incrementValue * 1.5);
+                
+                response.push(...[
+                    "Increment upgrade:",
+                    `\tValue: {${incrementValue}}`,
+                    `\tPrice: {${incrementCost}}`
+                ]);
+                
+                var currentStor = this.storageArr.indexOf(this.storage);
+                if (currentStor < this.storageArr.length) {
+                    var targetStorage = this.storageArr[currentStor + 1];
+                    var target = this.storages[targetStorage];
+                    response.push(...[
+                        "Storage upgrade:",
+                        `\tName: {${targetStorage}}`,
+                        `\tCapacity: {${this.formatter(target.capacity)}}`,
+                        `\tPrice: {$${target.price}}`
+                    ]);
+                }
+                
+                return response;
+            }
         }
         // cheat: {
         //     func: () => {
