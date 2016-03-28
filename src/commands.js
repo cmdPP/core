@@ -1,5 +1,5 @@
-import { Name } from 'charlatan';
-import Moniker from 'moniker';
+// import { Name } from 'charlatan';
+// import Moniker from 'moniker';
 
 function loadCommands() {
     this._commands = {
@@ -331,7 +331,7 @@ function loadCommands() {
             desc: "Displays the current version."
         },
         upgrade: {
-            func: (command) => {
+            func: (command = "") => {
                 if (command === "mineData") {
                     var currentCost = Math.floor((this.increment + 1) * 1.5);
                     if (this.removeMoney(currentCost)) {
@@ -385,7 +385,12 @@ function loadCommands() {
                     ]);
                 }
                 
-                return response;
+                // return response;
+                var newResponse = [];
+                for (var res of response) {
+                    newResponse.push(`\t${res}`);
+                }
+                return newResponse;
             }
         }
         // cheat: {
