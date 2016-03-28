@@ -244,75 +244,75 @@ function loadCommands() {
         //     },
         //     desc: "Prints a read-out sampling some collected data."
         // },
-        upgradeStorage: {
-            func: (targetStorage) => {
-                if (targetStorage) {
-                    if (targetStorage === this.storage) {
-                        this.respond("This storage has already been unlocked.");
-                        return;
-                    }
-                    if (targetStorage in this.storages) {
-                        var target = this.storages[targetStorage];
-                        if (target.capacity < this.storages[this.storage].capacity) {
-                            this.respond(`You possess storage with a capacity greater than "${targetStorage}"`);
-                        }
-                        if (this.money >= target.price) {
-                            this.removeMoney(target.price);
-                            this.storage = targetStorage;
-                            this.respond(`Storage upgraded to: ${targetStorage}`, `New capacity: ${this.formatter(target.capacity)}`);
-                        } else {
-                            this.respond("You do not have enough money to purchase this upgrade.");
-                        }
-                    } else {
-                        this.respond("Storage does not exist.");
-                    }
-                } else {
-                    this.command("help upgradeStorage");
-                }
-            },
-            // desc: "Upgrades your storage capacity.",
-            desc: () => {
-                var storList = [];
-                for (var storName in this.storages) {
-                    var stor = this.storages[storName];
-                    if (this.storage === storName) {
-                        storName = "* "+storName;
-                    }
-                    var capacity = this.formatter(stor.capacity);
-                    storList.push(...[
-                        `\t${storName}`,
-                        `\t\tCapacity: ${capacity}`,
-                        `\t\tPrice: $${stor.price}`
-                    ]);
-                }
-                return [
-                    "Upgrades your storage capacity",
-                    "Available storage options:",
-                    ...storList
-                ];
-            }
-        },
+        // upgradeStorage: {
+        //     func: (targetStorage) => {
+        //         if (targetStorage) {
+        //             if (targetStorage === this.storage) {
+        //                 this.respond("This storage has already been unlocked.");
+        //                 return;
+        //             }
+        //             if (targetStorage in this.storages) {
+        //                 var target = this.storages[targetStorage];
+        //                 if (target.capacity < this.storages[this.storage].capacity) {
+        //                     this.respond(`You possess storage with a capacity greater than "${targetStorage}"`);
+        //                 }
+        //                 if (this.money >= target.price) {
+        //                     this.removeMoney(target.price);
+        //                     this.storage = targetStorage;
+        //                     this.respond(`Storage upgraded to: ${targetStorage}`, `New capacity: ${this.formatter(target.capacity)}`);
+        //                 } else {
+        //                     this.respond("You do not have enough money to purchase this upgrade.");
+        //                 }
+        //             } else {
+        //                 this.respond("Storage does not exist.");
+        //             }
+        //         } else {
+        //             this.command("help upgradeStorage");
+        //         }
+        //     },
+        //     // desc: "Upgrades your storage capacity.",
+        //     desc: () => {
+        //         var storList = [];
+        //         for (var storName in this.storages) {
+        //             var stor = this.storages[storName];
+        //             if (this.storage === storName) {
+        //                 storName = "* "+storName;
+        //             }
+        //             var capacity = this.formatter(stor.capacity);
+        //             storList.push(...[
+        //                 `\t${storName}`,
+        //                 `\t\tCapacity: ${capacity}`,
+        //                 `\t\tPrice: $${stor.price}`
+        //             ]);
+        //         }
+        //         return [
+        //             "Upgrades your storage capacity",
+        //             "Available storage options:",
+        //             ...storList
+        //         ];
+        //     }
+        // },
         currentStorage: {
             func: () => {
-                var stor = this.storages[this.storage];
-                this.respond(...['Your current storage is:', `\tName: ${this.storage}`, `\tCapacity: ${stor.capacity}`]);
+                // var stor = this.storages[this.storage];
+                this.respond(...['Your current storage is:', `\tName: ${this.storage.name}`, `\tCapacity: ${this.storage.capacity}`]);
             },
             desc: "Responds with your current storage.",
             unlocked: true
         },
-        upgradeMine: {
-            func: () => {
-                var currentCost = Math.floor((this.increment + 1) * 1.5);
-                if (this.money >= currentCost) {
-                    this.money -= currentCost;
-                    this.increment++;
-                    this.respond(`mineData upgraded to increment {${this.increment}} for {$${currentCost}}`);
-                } else {
-                    this.respond(`You require $${currentCost} to purchase this upgrade.`);
-                }
-            },
-            desc: "Upgrades your mining power."
-        },
+        // upgradeMine: {
+        //     func: () => {
+        //         var currentCost = Math.floor((this.increment + 1) * 1.5);
+        //         if (this.money >= currentCost) {
+        //             this.money -= currentCost;
+        //             this.increment++;
+        //             this.respond(`mineData upgraded to increment {${this.increment}} for {$${currentCost}}`);
+        //         } else {
+        //             this.respond(`You require $${currentCost} to purchase this upgrade.`);
+        //         }
+        //     },
+        //     desc: "Upgrades your mining power."
+        // },
         reset: {
             func: () => {
                 this.respond("Resetting all progress.");
@@ -340,17 +340,19 @@ function loadCommands() {
                     }
                 } else if (command === "storage") {
                     // var targetStorage = this.storageArr[this.storageArr.indexOf(this.storage) + 1];
-                    var currentStor = this.storageArr.indexOf(this.storage);
-                    if (currentStor >= this.storageArr.length) {
+                    // var currentStor = this.storageArr.indexOf(this.storage);
+                    var target = this.storage.upgrade;
+                    if (!target) {
                         this.respond("You already have the largest storage capacity.");
                         return;
                     }
-                    var targetStorage = this.storageArr[currentStor + 1];
-                    var target = this.storages[targetStorage];
+                    // var targetStorage = this.storageArr[currentStor + 1];
+                    // var target = this.storages[targetStorage];
                     if (this.removeMoney(target.price)) {
-                        this.storage = targetStorage;
+                        // this.storage = targetStorage;
+                        this.storage.current = target;
                         // this.respond(`Storage upgraded to: ${targetStorage}`, `New capacity: ${this.formatter(target.capacity)}`);
-                        this.respond(`Storage upgraded to {${targetStorage}} for {$${target.price}}`,
+                        this.respond(`Storage upgraded to {${target.name}} for {$${target.price}}`,
                             `New capacity: {${this.formatter(target.capacity)}}`);
                     } else {
                         this.respond(`You require $${target.price} to purhcase this upgrade.`)
@@ -365,20 +367,26 @@ function loadCommands() {
                 var incrementCost = Math.floor(incrementValue * 1.5);
                 
                 response.push(...[
-                    "Increment upgrade:",
-                    `\tValue: {${incrementValue}}`,
-                    `\tPrice: {${incrementCost}}`
+                    "mineData:",
+                    `\tCurrent value: {${this.increment}}`,
+                    "\tNext upgrade:",
+                    `\t\tValue: {${incrementValue}}`,
+                    `\t\tPrice: {${incrementCost}}`
                 ]);
                 
-                var currentStor = this.storageArr.indexOf(this.storage);
-                if (currentStor < this.storageArr.length) {
-                    var targetStorage = this.storageArr[currentStor + 1];
-                    var target = this.storages[targetStorage];
+                // var currentStor = this.storageArr.indexOf(this.storage);
+                var target = this.storage.upgrade;
+                if (target) {
+                    // var targetStorage = this.storageArr[currentStor + 1];
+                    // var target = this.storages[targetStorage];
                     response.push(...[
-                        "Storage upgrade:",
-                        `\tName: {${targetStorage}}`,
-                        `\tCapacity: {${this.formatter(target.capacity)}}`,
-                        `\tPrice: {$${target.price}}`
+                        "storage:",
+                        `\tCurrent name: {${this.storage.name}}`,
+                        `\tCurrent capacity: {${this.formatter(this.storage.capacity)}}`,
+                        "\tNext upgrade:",
+                        `\t\tName: {${target.name}}`,
+                        `\t\tCapacity: {${this.formatter(target.capacity)}}`,
+                        `\t\tPrice: {$${target.price}}`
                     ]);
                 }
                 

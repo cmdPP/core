@@ -128,14 +128,15 @@ describe('CMD', () => {
 
     it('upgrades increment', () => {
         expect(cmd.increment).to.not.equal(2);
-        cmd.command("upgradeMine");
+        cmd.command("upgrade mineData");
         expect(cmd.increment).to.equal(2);
     });
 
     it('upgrades storage', () => {
-        expect(cmd.storage).to.equal('selectronTube');
-        cmd.command('upgradeStorage floppyDisk');
-        expect(cmd.storage).to.equal('floppyDisk');
+        expect(cmd.storage.name).to.equal('selectronTube');
+        // cmd.command('upgradeStorage floppyDisk');
+        cmd.command('upgrade storage');
+        expect(cmd.storage.name).to.equal('floppyDisk');
     });
 
     it('saves', () => {
@@ -143,14 +144,14 @@ describe('CMD', () => {
         expect(cmd.money).to.not.equal(0);
         expect(cmd.increment).to.not.equal(1);
         // expect(cmd.autoIncrement).to.not.equal(1);
-        expect(cmd.storage).to.not.equal('selectronTube');
+        expect(cmd.storage.name).to.not.equal('selectronTube');
         expect(cmd.unlocked).to.not.eql([]);
 
         cmd.data = 5;
         cmd.money = 0;
         cmd.increment = 1;
         cmd.autoIncrement = 1;
-        cmd.storage = "selectronTube";
+        cmd.storage.current = "selectronTube";
         for (var cmdName in cmd._commands) {
             if (cmd._commands[cmdName].price !== 0) {
                 cmd._commands[cmdName].unlocked = false;
@@ -166,7 +167,7 @@ describe('CMD', () => {
         expect(cmd.money).to.equal(0);
         expect(cmd.increment).to.equal(1);
         expect(cmd.autoIncrement).to.equal(1);
-        expect(cmd.storage).to.equal('selectronTube');
+        expect(cmd.storage.name).to.equal('selectronTube');
         for (cmdName in cmd._commands) {
             if ('price' in cmd._commands[cmdName] && cmd._commands[cmdName].price !== 0) {
                 expect(cmd._commands[cmdName].unlocked).to.equal(false);
@@ -174,3 +175,7 @@ describe('CMD', () => {
         }
     });
 });
+
+// if (cmd.debug) {
+//     console.log(JSON.stringify(responses, null, 2));
+// }

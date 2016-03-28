@@ -10,37 +10,47 @@
 - [x] Add storage
 - [x] Add unit tests.
 
-## API
-A CLI environment-like game
+## API  
+### Classes  
+* <code>[CMD](#CMD)</code> - Class representing the main game logic
+* <code>[Storage](#Storage)</code> - Class representing a storage object.
+* <code>[StorageContainer](#StorageContainer)</code> - Class representing a container for all Storage instances, as well as a representation of the current Storage instance.
 
-<a name="module_cmdpp-core..CMD"></a>
+<a name="CMD"></a>
 
-### cmdpp-core~CMD
-Class representing the game object.
+## CMD
+Class representing the main game logic.
 
-**Kind**: inner class of <code>[cmdpp-core](#module_cmdpp-core)</code>  
+**Kind**: global class  
 
-* [~CMD](#module_cmdpp-core..CMD)
-    * [new CMD(options)](#new_module_cmdpp-core..CMD_new)
-    * [.gameLoop()](#module_cmdpp-core..CMD+gameLoop)
-    * [.respond(...txt)](#module_cmdpp-core..CMD+respond)
-    * [.checkStorage(increment)](#module_cmdpp-core..CMD+checkStorage) ⇒ <code>boolean</code>
-    * [.command(str)](#module_cmdpp-core..CMD+command)
-    * [.update()](#module_cmdpp-core..CMD+update)
-    * [.save()](#module_cmdpp-core..CMD+save)
-    * [.load()](#module_cmdpp-core..CMD+load)
-    * [.addData(amt)](#module_cmdpp-core..CMD+addData) ⇒ <code>boolean</code>
-    * [.removeData(amt)](#module_cmdpp-core..CMD+removeData) ⇒ <code>boolean</code>
-    * [.addMoney(amt)](#module_cmdpp-core..CMD+addMoney)
-    * [.removeMoney(amt)](#module_cmdpp-core..CMD+removeMoney) ⇒ <code>boolean</code>
-    * [.formatBytes()](#module_cmdpp-core..CMD+formatBytes) ⇒
-    * [.formatter(size)](#module_cmdpp-core..CMD+formatter) ⇒
-    * [.loadStorage()](#module_cmdpp-core..CMD+loadStorage)
-    * [.reset()](#module_cmdpp-core..CMD+reset)
+* [CMD](#CMD)
+    * [new CMD(options)](#new_CMD_new)
+    * _instance_
+        * [.gameLoop()](#CMD+gameLoop)
+        * [.respond(...txt)](#CMD+respond)
+        * [.checkStorage(increment)](#CMD+checkStorage) ⇒ <code>boolean</code>
+        * [.command(str)](#CMD+command)
+        * [.update()](#CMD+update)
+        * [.save()](#CMD+save)
+        * [.load()](#CMD+load)
+        * [.addData(amt)](#CMD+addData) ⇒ <code>boolean</code>
+        * [.removeData(amt)](#CMD+removeData) ⇒ <code>boolean</code>
+        * [.addMoney(amt)](#CMD+addMoney)
+        * [.removeMoney(amt)](#CMD+removeMoney) ⇒ <code>boolean</code>
+        * [.formatBytes()](#CMD+formatBytes) ⇒
+        * [.formatter(size)](#CMD+formatter) ⇒
+        * [.reset()](#CMD+reset)
+    * _inner_
+        * [~respondCallback](#CMD..respondCallback) : <code>function</code>
+        * [~saveCallback](#CMD..saveCallback) ⇒ <code>Error</code> &#124; <code>null</code>
+        * [~loadCallback](#CMD..loadCallback) ⇒ <code>Object</code>
+        * [~updateCallback](#CMD..updateCallback) : <code>function</code>
+        * [~errorHandlerCallback](#CMD..errorHandlerCallback) : <code>function</code>
+        * [~commandProviderCallback](#CMD..commandProviderCallback) ⇒ <code>Command</code>
 
-<a name="new_module_cmdpp-core..CMD_new"></a>
+<a name="new_CMD_new"></a>
 
-#### new CMD(options)
+### new CMD(options)
 Instantiate the CMD object
 
 
@@ -95,142 +105,201 @@ var cmd = new CMD({
   }
 });
 ```
-<a name="module_cmdpp-core..CMD+gameLoop"></a>
+<a name="CMD+gameLoop"></a>
 
-#### cmd.gameLoop()
+### cmd.gameLoop()
 Start the game loop.
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
-<a name="module_cmdpp-core..CMD+respond"></a>
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
+<a name="CMD+respond"></a>
 
-#### cmd.respond(...txt)
+### cmd.respond(...txt)
 Send response to respond function from constructor
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | ...txt | <code>string</code> | Strings to be sent to respond function. |
 
-<a name="module_cmdpp-core..CMD+checkStorage"></a>
+<a name="CMD+checkStorage"></a>
 
-#### cmd.checkStorage(increment) ⇒ <code>boolean</code>
+### cmd.checkStorage(increment) ⇒ <code>boolean</code>
 Check if storage is full.
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
 **Returns**: <code>boolean</code> - If storage has enough space.  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| increment | <code>number</code> &#124; <code>undefined</code> | Increment to check against. If null, equal to CMD#increment. |
+| increment | <code>number</code> &#124; <code>undefined</code> | Increment to check against. If undefined, equal to CMD#increment. |
 
-<a name="module_cmdpp-core..CMD+command"></a>
+<a name="CMD+command"></a>
 
-#### cmd.command(str)
+### cmd.command(str)
 Run command
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | str | <code>string</code> | Command to be ran. |
 
-<a name="module_cmdpp-core..CMD+update"></a>
+<a name="CMD+update"></a>
 
-#### cmd.update()
+### cmd.update()
 Run update function from constructor to update game values
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
-<a name="module_cmdpp-core..CMD+save"></a>
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
+<a name="CMD+save"></a>
 
-#### cmd.save()
+### cmd.save()
 Save game progress
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
-<a name="module_cmdpp-core..CMD+load"></a>
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
+<a name="CMD+load"></a>
 
-#### cmd.load()
+### cmd.load()
 Load game progress
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
-<a name="module_cmdpp-core..CMD+addData"></a>
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
+<a name="CMD+addData"></a>
 
-#### cmd.addData(amt) ⇒ <code>boolean</code>
+### cmd.addData(amt) ⇒ <code>boolean</code>
 Add data
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
 **Returns**: <code>boolean</code> - if data was able to be added.  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | amt | <code>number</code> | Amount to add. |
 
-<a name="module_cmdpp-core..CMD+removeData"></a>
+<a name="CMD+removeData"></a>
 
-#### cmd.removeData(amt) ⇒ <code>boolean</code>
+### cmd.removeData(amt) ⇒ <code>boolean</code>
 Remove data
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
 **Returns**: <code>boolean</code> - if data was able to be removed.  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | amt | <code>number</code> | Amount to remove. |
 
-<a name="module_cmdpp-core..CMD+addMoney"></a>
+<a name="CMD+addMoney"></a>
 
-#### cmd.addMoney(amt)
+### cmd.addMoney(amt)
 Add money
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | amt | <code>number</code> | Amount to add. |
 
-<a name="module_cmdpp-core..CMD+removeMoney"></a>
+<a name="CMD+removeMoney"></a>
 
-#### cmd.removeMoney(amt) ⇒ <code>boolean</code>
+### cmd.removeMoney(amt) ⇒ <code>boolean</code>
 Remove money
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
 **Returns**: <code>boolean</code> - if money was able to be removed.  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | amt | <code>number</code> | Amount to remove. |
 
-<a name="module_cmdpp-core..CMD+formatBytes"></a>
+<a name="CMD+formatBytes"></a>
 
-#### cmd.formatBytes() ⇒
+### cmd.formatBytes() ⇒
 Format bytes into a human-readable format
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
 **Returns**: CMD#data in human-readable format  
-<a name="module_cmdpp-core..CMD+formatter"></a>
+<a name="CMD+formatter"></a>
 
-#### cmd.formatter(size) ⇒
+### cmd.formatter(size) ⇒
 Format number into a human-readable format
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
 **Returns**: size in human-readable format  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | size | <code>number</code> | Number to be formatted. |
 
-<a name="module_cmdpp-core..CMD+loadStorage"></a>
+<a name="CMD+reset"></a>
 
-#### cmd.loadStorage()
-Load storage options
-
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
-<a name="module_cmdpp-core..CMD+reset"></a>
-
-#### cmd.reset()
+### cmd.reset()
 Reset game progress
 
-**Kind**: instance method of <code>[CMD](#module_cmdpp-core..CMD)</code>  
+**Kind**: instance method of <code>[CMD](#CMD)</code>  
+<a name="CMD..respondCallback"></a>
+
+### cmd~respondCallback : <code>function</code>
+Function to handle responses from the CMD object.
+
+**Kind**: inner typedef of <code>[CMD](#CMD)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| ...txt | <code>\*</code> | Responses |
+
+<a name="CMD..saveCallback"></a>
+
+### cmd~saveCallback ⇒ <code>Error</code> &#124; <code>null</code>
+Function to handle saving progress.
+
+**Kind**: inner typedef of <code>[CMD](#CMD)</code>  
+**Returns**: <code>Error</code> &#124; <code>null</code> - An error if encountered.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmdData | <code>Object</code> | Game progress to be saved. |
+| cmdData.data | <code>number</code> | Data collected. |
+| cmdData.money | <code>number</code> | Money collected. |
+| cmdData.increment | <code>number</code> | Increment value for mineData. |
+| cmdData.autoIncrement | <code>number</code> | Increment value for autoMine. |
+| cmdData.storage | <code>string</code> | Current storage value. |
+| cmdData.unlocked | <code>Array.&lt;string&gt;</code> | Commands bought with buyCommand. |
+
+<a name="CMD..loadCallback"></a>
+
+### cmd~loadCallback ⇒ <code>Object</code>
+Function to handle saving progress.
+
+**Kind**: inner typedef of <code>[CMD](#CMD)</code>  
+**Returns**: <code>Object</code> - Game progress loaded from save.  
+<a name="CMD..updateCallback"></a>
+
+### cmd~updateCallback : <code>function</code>
+Function to handle updating game values.
+
+**Kind**: inner typedef of <code>[CMD](#CMD)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmdObj | <code>[CMD](#CMD)</code> | CMD object. |
+
+<a name="CMD..errorHandlerCallback"></a>
+
+### cmd~errorHandlerCallback : <code>function</code>
+Function to handle thrown errors.
+
+**Kind**: inner typedef of <code>[CMD](#CMD)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>Error</code> | Error thrown. |
+
+<a name="CMD..commandProviderCallback"></a>
+
+### cmd~commandProviderCallback ⇒ <code>Command</code>
+Function to provide custom commands.
+
+**Kind**: inner typedef of <code>[CMD](#CMD)</code>  
+**Returns**: <code>Command</code> - Object of custom commands.  
 
 <a name="CMD..respondCallback"></a>
 
@@ -313,3 +382,191 @@ An object representing a command.
 | desc | <code>string</code> &#124; <code>function</code> |  | Description for command. |
 | usage | <code>string</code> &#124; <code>function</code> &#124; <code>undefined</code> | <code>null</code> | How to use the command. |
 | price | <code>number</code> &#124; <code>undefined</code> | <code>0</code> | Price to pay in bytes for command. |
+
+<a name="Storage"></a>
+
+## Storage
+Class representing a storage object.
+
+**Kind**: global class  
+**Typeicalname**: storageObj  
+
+* [Storage](#Storage)
+    * [new Storage(name, idx, prev)](#new_Storage_new)
+    * [.name](#Storage+name)
+    * [.idx](#Storage+idx)
+    * [.capacity](#Storage+capacity)
+    * [.price](#Storage+price)
+    * [.prev](#Storage+prev)
+
+<a name="new_Storage_new"></a>
+
+### new Storage(name, idx, prev)
+Instantiate a Storage object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of storage object. |
+| idx | <code>number</code> | Index in list of StorageContainer's storage objects. |
+| prev | <code>string</code> &#124; <code>undefined</code> | Name of Storage object preceding this object in list of StorageContainer's storage objects. |
+
+<a name="Storage+name"></a>
+
+### storage.name
+**Kind**: instance property of <code>[Storage](#Storage)</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of storage object |
+
+<a name="Storage+idx"></a>
+
+### storage.idx
+**Kind**: instance property of <code>[Storage](#Storage)</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| idx | <code>number</code> | Index in list of StorageContainer's storage objects. |
+
+<a name="Storage+capacity"></a>
+
+### storage.capacity
+**Kind**: instance property of <code>[Storage](#Storage)</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| capacity | <code>number</code> | Capacity of storage object |
+
+<a name="Storage+price"></a>
+
+### storage.price
+**Kind**: instance property of <code>[Storage](#Storage)</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| price | <code>number</code> | Price of storage object |
+
+<a name="Storage+prev"></a>
+
+### storage.prev
+**Kind**: instance property of <code>[Storage](#Storage)</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| prev | <code>string</code> &#124; <code>undefined</code> | Name of Storage object preceding this object in list of StorageContainer's storage objects. |
+
+
+<a name="StorageContainer"></a>
+
+## StorageContainer
+Class representing a container for all Storage instances, as well as a representation of the current Storage instance.
+
+**Kind**: global class  
+**Typeicalname**: storage  
+
+* [StorageContainer](#StorageContainer)
+    * _instance_
+        * [.name](#StorageContainer+name) : <code>string</code>
+        * [.capacity](#StorageContainer+capacity) : <code>number</code>
+        * [.price](#StorageContainer+price) : <code>number</code>
+        * [.idx](#StorageContainer+idx) : <code>number</code>
+        * [.current](#StorageContainer+current) : <code>[Storage](#Storage)</code>
+        * [.upgrade](#StorageContainer+upgrade) : <code>[Storage](#Storage)</code>
+        * [.otherNames](#StorageContainer+otherNames) : <code>Array.&lt;string&gt;</code>
+        * [.others](#StorageContainer+others) : <code>Object</code>
+        * [.allNames](#StorageContainer+allNames) : <code>Array.&lt;string&gt;</code>
+        * [.all](#StorageContainer+all) : <code>Object</code>
+        * [.checkStorage(data, increment)](#StorageContainer+checkStorage) ⇒ <code>boolean</code>
+    * _static_
+        * [.getStorage(storages)](#StorageContainer.getStorage) ⇒ <code>[StorageContainer](#StorageContainer)</code>
+
+<a name="StorageContainer+name"></a>
+
+### storageContainer.name : <code>string</code>
+Name of current storage.
+
+**Kind**: instance property of <code>[StorageContainer](#StorageContainer)</code>  
+<a name="StorageContainer+capacity"></a>
+
+### storageContainer.capacity : <code>number</code>
+Capacity of current storage.
+
+**Kind**: instance property of <code>[StorageContainer](#StorageContainer)</code>  
+<a name="StorageContainer+price"></a>
+
+### storageContainer.price : <code>number</code>
+Price of current storage.
+
+**Kind**: instance property of <code>[StorageContainer](#StorageContainer)</code>  
+<a name="StorageContainer+idx"></a>
+
+### storageContainer.idx : <code>number</code>
+ID of current storage.
+
+**Kind**: instance property of <code>[StorageContainer](#StorageContainer)</code>  
+<a name="StorageContainer+current"></a>
+
+### storageContainer.current : <code>[Storage](#Storage)</code>
+Current storage.
+
+**Kind**: instance property of <code>[StorageContainer](#StorageContainer)</code>  
+<a name="StorageContainer+upgrade"></a>
+
+### storageContainer.upgrade : <code>[Storage](#Storage)</code>
+Next storage in upgrade list.
+
+**Kind**: instance property of <code>[StorageContainer](#StorageContainer)</code>  
+<a name="StorageContainer+otherNames"></a>
+
+### storageContainer.otherNames : <code>Array.&lt;string&gt;</code>
+Names of all storages excluding the currently selected.
+
+**Kind**: instance property of <code>[StorageContainer](#StorageContainer)</code>  
+<a name="StorageContainer+others"></a>
+
+### storageContainer.others : <code>Object</code>
+All storages excluding the currently selected.
+
+**Kind**: instance property of <code>[StorageContainer](#StorageContainer)</code>  
+<a name="StorageContainer+allNames"></a>
+
+### storageContainer.allNames : <code>Array.&lt;string&gt;</code>
+Names of all storages.
+
+**Kind**: instance property of <code>[StorageContainer](#StorageContainer)</code>  
+<a name="StorageContainer+all"></a>
+
+### storageContainer.all : <code>Object</code>
+All storages.
+
+**Kind**: instance property of <code>[StorageContainer](#StorageContainer)</code>  
+<a name="StorageContainer+checkStorage"></a>
+
+### storageContainer.checkStorage(data, increment) ⇒ <code>boolean</code>
+Check if storage is full.
+
+**Kind**: instance method of <code>[StorageContainer](#StorageContainer)</code>  
+**Returns**: <code>boolean</code> - If storage has enough space.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>number</code> | Data to check against. |
+| increment | <code>number</code> | Increment to check against. |
+
+<a name="StorageContainer.getStorage"></a>
+
+### StorageContainer.getStorage(storages) ⇒ <code>[StorageContainer](#StorageContainer)</code>
+Instantiate StorageContainer
+
+**Kind**: static method of <code>[StorageContainer](#StorageContainer)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| storages | <code>Array.&lt;string&gt;</code> &#124; <code>undefined</code> | Names of storages. If undefined, use default storages. |
+

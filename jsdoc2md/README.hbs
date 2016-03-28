@@ -5,16 +5,20 @@
 
 ### ToDos
 - [x] Fully integrate code from previous repository before storage was added.
-- [ ] Implement help delimiter (In Node application, &nbsp is plain text, not HTML).
+- [x] Implement help delimiter (In Node application, &nbsp is plain text, not HTML).
 - [ ] Implement [original todos](https://github.com/jettcrowson/jettcrowson.github.io#todo).
-- [ ] Add storage
+- [x] Add storage
 - [x] Add unit tests.
 
-## API
-{{#module name="cmdpp-core"~}}
-{{>body~}}
-{{>members~}}
-{{/module}}
+## API  
+### Classes  
+* <code>[CMD](#CMD)</code> - Class representing the main game logic
+* <code>[Storage](#Storage)</code> - Class representing a storage object.
+* <code>[StorageContainer](#StorageContainer)</code> - Class representing a container for all Storage instances, as well as a representation of the current Storage instance.
+
+{{#class name="CMD"}}
+{{>docs}}
+{{/class}}
 
 <a name="CMD..respondCallback"></a>
 
@@ -97,3 +101,11 @@ An object representing a command.
 | desc | <code>string</code> &#124; <code>function</code> |  | Description for command. |
 | usage | <code>string</code> &#124; <code>function</code> &#124; <code>undefined</code> | <code>null</code> | How to use the command. |
 | price | <code>number</code> &#124; <code>undefined</code> | <code>0</code> | Price to pay in bytes for command. |
+
+{{#class name="Storage"}}
+{{>docs}}
+{{/class}}
+
+{{#class name="StorageContainer"}}
+{{>docs}}
+{{/class}}

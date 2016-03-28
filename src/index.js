@@ -1,19 +1,20 @@
 /*eslint no-console: 0*/
 
-/**
- * A CLI environment-like game
- * @module cmdpp-core
- */
+// /**
+//  * A CLI environment-like game
+//  * @module cmdpp-core
+//  */
 
 import filesize from 'filesize';
 import { loadCommands as loadCMDs } from './commands';
+import { getStorage } from './storage';
 import pJSON from '../package.json';
 
 // TODO: Replace current CMD#storage with an object containing storage data
 // TODO: Move CMD#_commands to CMD#Commands
 // TODO: Create more JSDoc
 
-/** Class representing the game object.
+/** Class representing the main game logic.
  * @typicalname cmd
  * @class
  */
@@ -96,7 +97,7 @@ class CMD {
         this.increment = 1;
         this.autoIncrement = 1;
         this.isAutoMining = false;
-        this.storage = "selectronTube";
+        // this.storage = "selectronTube";
         this.data = 0;
         this.counter = 0;
 
@@ -108,7 +109,9 @@ class CMD {
         this.updateFunc = options.funcs.update;
         this.resetFunc = options.funcs.reset;
         this.errHandlerFunc = options.funcs.errorHandler;
-        this.loadStorage();
+        // this.loadStorage();
+        this.storage = getStorage();
+        // this.storage = this.storages["selectronTube"];
         this.loadCommands();
         var customCommands = this.commandProvider();
         Object.assign(this._commands, customCommands);
@@ -166,15 +169,22 @@ class CMD {
 
     /**
      * Check if storage is full.
-     * @param {number | undefined} increment - Increment to check against. If null, equal to CMD#increment.
+     * @param {number | undefined} increment - Increment to check against. If undefined, equal to CMD#increment.
      * @return {boolean} If storage has enough space.
      */
-    checkStorage(increment) {
-        if (increment === undefined) {
-            increment = this.increment;
-        }
+    checkStorage(increment = this.increment) {
+        // if (increment === undefined) {
+        //     increment = this.increment;
+        // }
         // return (this.data <= this.storages[this.storage].capacity);
-        return ((this.data + increment) <= this.storages[this.storage].capacity);
+        // return ((this.data + increment) <= this.storages[this.storage].capacity);
+        var check = this.storage.checkStorage(this.data, increment);
+        if (this.debug) {
+            console.log("Current data:", this.data);
+            console.log("Increment:", increment);
+            console.log("Check storage:", check);
+        }
+        return check;
     }
 
     /**
@@ -233,7 +243,8 @@ class CMD {
             money: this.money,
             increment: this.increment,
             autoIncrement: this.autoIncrement,
-            storage: this.storage,
+            // storage: this.storage,
+            storage: this.storage.name,
             unlocked: []
         };
         for (let cmdName in this._commands) {
@@ -269,6 +280,7 @@ class CMD {
             this.money = loadData.money;
             this.increment = loadData.increment;
             this.autoIncrement = loadData.autoIncrement;
+            this.storage.current = loadData.storage;
             for (let cmdName in this._commands) {
                 var cmd = this._commands[cmdName];
                 if (loadData.unlocked.indexOf(cmdName) === -1 && 'price' in cmd && cmd.price !== 0) {
@@ -355,41 +367,6 @@ class CMD {
      */
     formatter(size) {
         return filesize(size);
-    }
-
-    /**
-     * Load storage options
-     */
-    loadStorage() {
-        var storages = [
-            'selectronTube',
-            'floppyDisk',
-            'zipDrive',
-            'DVD',
-            'sdCard',
-            'flashDrive',
-            'SSD',
-            'ssdArray',
-            'serverRack',
-            'serverRoom',
-            'serverWarehouse',
-            'multipleLocations',
-            'smallAfricanCountry',
-            'multipleCountries',
-            'alienSpaceArray',
-            'enslavedHumans'
-        ];
-
-        var storageObj = {};
-        for (var i = 0; i < storages.length; i++) {
-            storageObj[storages[i]] = {
-                capacity: Math.pow(1024, i+1),
-                price: Math.pow(1024, i) - 1
-            };
-        }
-
-        this.storageArr = storages;
-        this.storages = storageObj;
     }
 
     /**
