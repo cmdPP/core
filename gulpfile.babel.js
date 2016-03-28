@@ -8,7 +8,11 @@ import runSeq from 'run-sequence';
 import del from 'del';
 // import pJSON from './package.json';
 
-var plugins = gLP();
+var plugins = gLP({
+    rename: {
+        'gulp-jsdoc-to-markdown': 'jsdocMD'
+    }
+});
 
 gulp.task('browser:build', () => {
     return browserify('./src/web.js', { debug: true })
@@ -48,5 +52,5 @@ gulp.task('babel', (cb) => {
 });
 
 gulp.task('build', (cb) => {
-    return runSeq('babel', 'browser');
+    return runSeq('babel', 'browser', cb);
 });

@@ -1,0 +1,99 @@
+# CMD++ Core
+
+[![Join the chat at https://gitter.im/cmdPP/core](https://badges.gitter.im/cmdPP/core.svg)](https://gitter.im/cmdPP/core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+
+### ToDos
+- [x] Fully integrate code from previous repository before storage was added.
+- [ ] Implement help delimiter (In Node application, &nbsp is plain text, not HTML).
+- [ ] Implement [original todos](https://github.com/jettcrowson/jettcrowson.github.io#todo).
+- [ ] Add storage
+- [x] Add unit tests.
+
+## API
+{{#module name="cmdpp-core"~}}
+{{>body~}}
+{{>members~}}
+{{/module}}
+
+<a name="CMD..respondCallback"></a>
+
+#### respondCallback(...txt)
+Function to handle responses from the CMD object.
+
+**Kind**: anonymous function passed to <code>[new CMD(options)](#new_module_cmdpp-core..CMD_new)</code>
+
+| Param | Type | Description |
+| --- | --- | --- |
+| ...txt | <code>string</code> | Responses |
+
+<a name="CMD..saveCallback"></a>
+
+#### saveCallback(cmdData)
+Function to handle saving progress.
+
+**Kind**: anonymous function passed to <code>[new CMD(options)](#new_module_cmdpp-core..CMD_new)</code>  
+**Returns**: <code>[Error](https://nodejs.org/api/errors.html)</code> &#124; <code>null</code> - An error if encountered.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmdData | <code>object</code> | Game progress to be saved. |
+| cmdData.data | <code>number</code> | Data collected. |
+| cmdData.money | <code>number</code> | Money collected. |
+| cmdData.increment | <code>number</code> | Increment value for mineData. |
+| cmdData.autoIncrement | <code>number</code> | Increment value for autoMine. |
+| cmdData.storage | <code>string</code> | Current storage value. |
+| cmdData.unlocked | <code>string[]</code> | Commands bought with buyCommand |
+
+<a name="CMD..loadCallback"></a>
+
+#### loadCallback()
+Function to handle saving progress.
+
+**Kind**: anonymous function passed to <code>[new CMD(options)](#new_module_cmdpp-core..CMD_new)</code>  
+**Returns**: <code>Object</code> - Game progress loaded from save.
+
+<a name="CMD..updateCallback"></a>
+
+#### updateCallback(cmdObj)
+Function to handle updating game values.
+
+**Kind**: anonymous function passed to <code>[new CMD(options)](#new_module_cmdpp-core..CMD_new)</code>
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmdObj | <code>[CMD](#module_cmdpp-core..CMD)</code> | CMD object. |
+
+<a name="CMD..errorHandlerCallback"></a>
+
+#### errorHandlerCallback(err)
+Function to handle thrown errors.
+
+**Kind**: anonymous function passed to <code>[new CMD(options)](#new_module_cmdpp-core..CMD_new)</code>
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>[Error](https://nodejs.org/api/errors.html)</code> | Error thrown |
+
+<a name="CMD..commandProviderCallback"></a>
+
+#### commandProviderCallback()
+Function to provide custom commands.
+
+**Kind**: anonymous function passed to <code>[new CMD(options)](#new_module_cmdpp-core..CMD_new)</code>  
+**Returns**: <code>{[Command](#module_cmdpp-core..Command)}</code> - Object of custom commands.
+
+<a name="module_cmdpp-core..Command"></a>
+
+### Command : <code>Object</code>
+An object representing a command.
+
+**Kind**: inner typedef of <code>[cmdpp-core](#module_cmdpp-core)</code>  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| func | <code>function</code> |  | Function called when command is run. |
+| desc | <code>string</code> &#124; <code>function</code> |  | Description for command. |
+| usage | <code>string</code> &#124; <code>function</code> &#124; <code>undefined</code> | <code>null</code> | How to use the command. |
+| price | <code>number</code> &#124; <code>undefined</code> | <code>0</code> | Price to pay in bytes for command. |

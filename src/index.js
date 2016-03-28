@@ -1,86 +1,75 @@
 /*eslint no-console: 0*/
 
+/**
+ * A CLI environment-like game
+ * @module cmdpp-core
+ */
+
 import filesize from 'filesize';
 import { loadCommands as loadCMDs } from './commands';
 import pJSON from '../package.json';
 
-/** Class representing the game object. */
+// TODO: Replace current CMD#storage with an object containing storage data
+// TODO: Move CMD#_commands to CMD#Commands
+// TODO: Create more JSDoc
+
+/** Class representing the game object.
+ * @typicalname cmd
+ * @class
+ */
 class CMD {
-
-    /**
-     * Function to handle responses from the CMD object.
-     * @name respond
-     * @function
-     * @param {...*} txt - Responses
-     */
-
-    /**
-     * Function to handle saving progress.
-     * @name save
-     * @function
-     * @param {Object} cmdData - Game progress to be saved.
-     * @param {Number} cmdData.data - Data collected.
-     * @param {Number} cmdData.money - Money collected.
-     * @param {Number} cmdData.increment - Increment value for mineData.
-     * @param {Number} cmdData.autoIncrement - Increment value for autoMine.
-     * @param {String} cmdData.storage - Current storage value.
-     * @param {String[]} cmdData.unlocked - Commands bought with buyCommand.
-     * @return {Error} An error if encountered.
-     */
-
-    /**
-     * Function to handle loading progress.
-     * @name load
-     * @function
-     * @return {Object} Game progress loaded from save.
-     */
-
-    /**
-     * Function to handle updating game values.
-     * @name update
-     * @function
-     * @param {CMD} cmdObj - CMD object.
-     */
-
-    /**
-     * Function to handle thrown errors.
-     * @name errorHandler
-     * @function
-     * @param {Error} err - Error thrown.
-     */
-
-    /**
-     * An object representing a command.
-     * @typedef {Object} Command
-     * @property {Function} func - Function called when command is run.
-     * @property {String|Function} desc - Description for command.
-     * @property {String|Function} [usage] - How to use the command.
-     * @property {Boolean} unlocked - If the command is unlocked by default.
-     * @property {Number} [price] - Price to pay in bytes for command.
-     */
-
-    /**
-     * Function to provide custom commands.
-     * @name commandProvider
-     * @function
-     * @returns {Object} Object of custom commands.
 
     /**
      * Instantiate the CMD object
      * @constructor
      * @param {Object} options - Options
-     * @param {Boolean} [opts.debug=false] - Debug mode.
+     * @param {Boolean} opts.debug=false - Debug mode.
      * @param {Object} opts.funcs - Object containing functions to be used by CMD.
-     * @param {respond} opts.funcs.respond - Function for responding.
-     * @param {save} opts.funcs.save - Function for saving.
-     * @param {load} opts.funcs.load - Function for loading.
-     * @param {update} opts.funcs.update - Function for updating.
-     * @param {errorHandler} opts.errorHandler - Function for error handling.
-     * @param {commandProvider} [commandProvider] - Function to provide custom commands Cannot be ES6 arrow function.
+     * @param {CMD~respondCallback} opts.funcs.respond - Function for responding.
+     * @param {CMD~saveCallback} opts.funcs.save - Function for saving.
+     * @param {CMD~loadCallback} opts.funcs.load - Function for loading.
+     * @param {CMD~updateCallback} opts.funcs.update - Function for updating.
+     * @param {CMD~errorHandlerCallback} opts.errorHandler - Function for error handling.
+     * @param {CMD~commandProviderCallback} opts.commandProvider - Function to provide custom commands. Cannot be ES6 arrow function.
      * @example
      * ```js
-     * const CMD = require('cmdpp-core').CMD;
-     *
+     * import { CMD } from 'cmdpp-core';
+     * import fs from 'fs';
+     * var cmdContainer = {
+     *   data: 0,
+     *   money: 0
+     * };
+     * var cmd = new CMD({
+     *   debug: false,
+     *   funcs: {
+     *     respond: (...txt) => console.log(...txt),
+     *     save: (cmdData) => fs.writeFileSync('save.json', JSON.stringify(cmdData, null, 2)),
+     *     load: () => return JSON.parse(fs.readFileSync('save.json')),
+     *     update: (cmdObj) => {
+     *       cmdContainer.data = cmdObj.data;
+     *       cmdContainer.money = cmdObj.money;
+     *     }
+     *   },
+     *   errorHandler: (err) => console.error(err),
+     *   commandProvider: function() {
+     *     return {
+     *       stringDesc: {
+     *         func: () => this.respond("First test run!"),
+     *         desc: "Desc can be a string"
+     *       },
+     *       functionDesc: {
+     *         func: () => this.respond("Second test run!"),
+     *         desc: () => "Desc can also be a function that returns a string or an array of strings."
+     *       },
+     *       buyableCommand: {
+     *         func: () => this.respond("buyable command!"),
+     *         desc: 'This command must be bought with the "buyCommand" command.',
+     *         price: 10
+     *       }
+     *     };
+     *   }
+     * });
+     * ```
      */
     constructor(options) {
         var defaults = {
@@ -108,12 +97,12 @@ class CMD {
         this.autoIncrement = 1;
         this.isAutoMining = false;
         this.storage = "selectronTube";
-        this.historyBufferEnabled = true;
-        this.historyBuffer = [];
-        this.historyBufferCurrentIdx = -1;
-        this.historyLastDirection = null;
-        this.unit = "byte";
-        this.dataShow = 0;
+        // this.historyBufferEnabled = true;
+        // this.historyBuffer = [];
+        // this.historyBufferCurrentIdx = -1;
+        // this.historyLastDirection = null;
+        // this.unit = "byte";
+        // this.dataShow = 0;
         this.data = 0;
         this.counter = 0;
 
@@ -130,6 +119,16 @@ class CMD {
         this.loadCommands();
         var customCommands = this.commandProvider();
         Object.assign(this._commands, customCommands);
+
+        for (let cmdName in this._commands) {
+            var cmd = this._commands[cmdName];
+            if (!('price' in cmd)) {
+                cmd.price = 0;
+            }
+            cmd.unlocked = cmd.price === 0;
+
+            this._commands[cmdName] = cmd;
+        }
 
         // this.command("load");
         this.load();
@@ -166,7 +165,7 @@ class CMD {
 
     /**
      * Send response to respond function from constructor
-     * @param {...String} txt - Strings to be sent to respond function.
+     * @param {...string} txt - Strings to be sent to respond function.
      */
     respond(...txt) {
         this.respondFunc(...txt);
@@ -174,8 +173,8 @@ class CMD {
 
     /**
      * Check if storage is full.
-     * @param {Number | Null} [increment] - Increment to check against. If null, equal to CMD#increment.
-     * @return {Boolean} If storage has enough space.
+     * @param {number | undefined} increment - Increment to check against. If null, equal to CMD#increment.
+     * @return {boolean} If storage has enough space.
      */
     checkStorage(increment) {
         if (increment === undefined) {
@@ -187,7 +186,7 @@ class CMD {
 
     /**
      * Run command
-     * @param {String} str - Command to be ran.
+     * @param {string} str - Command to be ran.
      */
     command(str = "") {
         if (str !== "") {
@@ -297,8 +296,8 @@ class CMD {
 
     /**
      * Add data
-     * @param {Number} amt - Amount to add.
-     * @return {Boolean} if data was able to be added.
+     * @param {number} amt - Amount to add.
+     * @return {boolean} if data was able to be added.
      */
     addData(amt) {
         var hasRoom = false;
@@ -311,8 +310,8 @@ class CMD {
     }
     /**
      * Remove data
-     * @param {Number} amt - Amount to remove.
-     * @return {Boolean} if data was able to be removed.
+     * @param {number} amt - Amount to remove.
+     * @return {boolean} if data was able to be removed.
      */
     removeData(amt) {
         var hasEnough = false;
@@ -326,7 +325,7 @@ class CMD {
 
     /**
      * Add money
-     * @param {Number} amt - Amount to add.
+     * @param {number} amt - Amount to add.
      */
     addMoney(amt) {
         this.money += amt;
@@ -335,8 +334,8 @@ class CMD {
 
     /**
      * Remove money
-     * @param {Number} amt - Amount to remove.
-     * @return {Boolean} if money was able to be removed.
+     * @param {number} amt - Amount to remove.
+     * @return {boolean} if money was able to be removed.
      */
     removeMoney(amt) {
         var hasEnough = false;
@@ -358,7 +357,7 @@ class CMD {
 
     /**
      * Format number into a human-readable format
-     * @param {Number} size - Number to be formatted.
+     * @param {number} size - Number to be formatted.
      * @return size in human-readable format
      */
     formatter(size) {
@@ -415,5 +414,58 @@ class CMD {
     }
 }
 
+
 export { CMD };
 export default CMD;
+
+/**
+ * Function to handle responses from the CMD object.
+ * @callback CMD~respondCallback
+ * @param {...*} txt - Responses
+ */
+
+/**
+ * Function to handle saving progress.
+ * @callback CMD~saveCallback
+ * @param {Object} cmdData - Game progress to be saved.
+ * @param {number} cmdData.data - Data collected.
+ * @param {number} cmdData.money - Money collected.
+ * @param {number} cmdData.increment - Increment value for mineData.
+ * @param {number} cmdData.autoIncrement - Increment value for autoMine.
+ * @param {string} cmdData.storage - Current storage value.
+ * @param {string[]} cmdData.unlocked - Commands bought with buyCommand.
+ * @return {Error | null} An error if encountered.
+ */
+
+/**
+ * Function to handle saving progress.
+ * @callback CMD~loadCallback
+ * @return {Object} Game progress loaded from save.
+ */
+
+/**
+ * Function to handle updating game values.
+ * @callback CMD~updateCallback
+ * @param {CMD} cmdObj - CMD object.
+ */
+
+/**
+ * Function to handle thrown errors.
+ * @callback CMD~errorHandlerCallback
+ * @param {Error} err - Error thrown.
+ */
+
+// /**
+//  * An object representing a command.
+//  * @typedef {Object} Command
+//  * @property {function} func - Function called when command is run.
+//  * @property {string|function} desc - Description for command.
+//  * @property {string|function|undefined} usage=null - How to use the command.
+//  * @property {number|undefined} price=0 - Price to pay in bytes for command.
+//  */
+
+/**
+ * Function to provide custom commands.
+ * @callback CMD~commandProviderCallback
+ * @return {Command} Object of custom commands.
+ */

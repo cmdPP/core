@@ -51,8 +51,7 @@ function loadCommands() {
                     this.respond(...responseList);
                 }
             },
-            desc: "Gives list of commands or specific instructions for commands.",
-            unlocked: true
+            desc: "Gives list of commands or specific instructions for commands."
         },
         mineData: {
             func: () => {
@@ -63,31 +62,10 @@ function loadCommands() {
                     this.respond("Your storage is full. Please upgrade storage to continue.");
                 }
             },
-            desc: "Increments data by your increment amount. The default is 1 byte.",
-            unlocked: true
+            desc: "Increments data by your increment amount. The default is 1 byte."
         },
         save: {
             func: () => {
-                // var saveObj = {
-                //     data: this.data,
-                //     money: this.money,
-                //     increment: this.increment,
-                //     autoIncrement: this.autoIncrement,
-                //     storage: this.storage,
-                //     unlocked: []
-                // };
-                // for (var cmdName in this._commands) {
-                //     var cmd = this._commands[cmdName];
-                //     if ('price' in cmd && cmd.price !== 0 && cmd.unlocked) {
-                //         saveObj.unlocked.push(cmdName);
-                //     }
-                // }
-                // // this.saveFunc(saveObj);
-                // try {
-                //     this.saveFunc(saveObj);
-                // } catch (e) {
-                //     this.errHandlerFunc(e);
-                // }
                 this.save();
             },
             desc: "Saves progress.",
@@ -112,7 +90,6 @@ function loadCommands() {
             },
             desc: "Every second, increments your data by the auto increment amount. Default is 1 byte per second.",
             usage: "autoMine (start | stop)",
-            unlocked: false,
             price: 20
         },
         sellData: {
@@ -168,7 +145,6 @@ function loadCommands() {
             },
             desc: "Converts data to money. The conversion is 1 byte for $1, but the data deteriorates during transfer.",
             usage: "sellData amount [unit]",
-            unlocked: false,
             price: 250
         },
         buyData: {
@@ -216,7 +192,6 @@ function loadCommands() {
             },
             desc: "Converts money to data. The conversion is 1 byte for $2.",
             usage: "buyData amount [unit]",
-            unlocked: false,
             price: 150
         },
         buyCommand: {
@@ -251,59 +226,27 @@ function loadCommands() {
                     "Available commands:",
                     ...cmdList
                 ];
-            },
-            unlocked: true
+            }
         },
         load: {
             func: () => {
-                // var loadData = this.loadFunc();
-                // // if () {
-                // //     this.respond("No save found.");
-                // //     return;
-                // // }
-                // var previousSave = true;
-                // if (!loadData) {
-                //     previousSave = false;
-                // }
-                // for (var k in loadData) {
-                //     if (loadData[k] === null) {
-                //         previousSave = false;
-                //         break;
-                //     }
-                // }
-                // if (previousSave) {
-                //     console.log(loadData);
-                //     this.data = loadData.data;
-                //     this.money = loadData.money;
-                //     this.increment = loadData.increment;
-                //     this.autoIncrement = loadData.autoIncrement;
-                //     for (var unlockedCMD of loadData.unlocked) {
-                //         this._commands[unlockedCMD].unlocked = true;
-                //     }
-                //     this.respond("Save loaded.");
-                // } else {
-                //     this.respond("No save found.");
-                // }
-                // this.update();
                 this.load();
             },
-            desc: "Loads previously saved games.",
-            unlocked: true
+            desc: "Loads previously saved games."
         },
-        sampleData: {
-            func: () => {
-                if (this.data > 0) {
-                    var name = Name.firstName();
-                    var verb = (Math.random() < 0.5 ? 'likes' : 'dislikes');
-                    var sub = Moniker.generator([Moniker.noun]).choose();
-                    this.respond(`${name} ${verb} ${sub}`);
-                } else {
-                    this.respond("You do not have enought data to use this command.");
-                }
-            },
-            desc: "Prints a read-out sampling some collected data.",
-            unlocked: true
-        },
+        // sampleData: {
+        //     func: () => {
+        //         if (this.data > 0) {
+        //             var name = Name.firstName();
+        //             var verb = (Math.random() < 0.5 ? 'likes' : 'dislikes');
+        //             var sub = Moniker.generator([Moniker.noun]).choose();
+        //             this.respond(`${name} ${verb} ${sub}`);
+        //         } else {
+        //             this.respond("You do not have enought data to use this command.");
+        //         }
+        //     },
+        //     desc: "Prints a read-out sampling some collected data."
+        // },
         upgradeStorage: {
             func: (targetStorage) => {
                 if (targetStorage) {
@@ -350,8 +293,7 @@ function loadCommands() {
                     "Available storage options:",
                     ...storList
                 ];
-            },
-            unlocked: true
+            }
         },
         currentStorage: {
             func: () => {
@@ -372,8 +314,7 @@ function loadCommands() {
                     this.respond(`You require $${currentCost} to purchase this upgrade.`);
                 }
             },
-            desc: "Upgrades your mining power.",
-            unlocked: true
+            desc: "Upgrades your mining power."
         },
         reset: {
             func: () => {
@@ -387,8 +328,7 @@ function loadCommands() {
             func: () => {
                 this.respond(`v${this.version}`);
             },
-            desc: "Displays the current version.",
-            unlocked: true
+            desc: "Displays the current version."
         }
         // cheat: {
         //     func: () => {
@@ -400,16 +340,15 @@ function loadCommands() {
         // }
     };
 
-    if (Name === undefined || Moniker === undefined) {
-        delete this._commands.sampleData;
-    }
+    // if (Name === undefined || Moniker === undefined) {
+    //     delete this._commands.sampleData;
+    // }
     if (this.debug) {
         this._commands.cheat = {
             func: () => {
                 this.addData(10000);
             },
-            desc: "For testing purposes.",
-            unlocked: true
+            desc: "For testing purposes."
         };
     }
 }
