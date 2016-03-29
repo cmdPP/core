@@ -6,7 +6,6 @@ import browserify from 'browserify';
 import babel from 'babelify';
 import runSeq from 'run-sequence';
 import del from 'del';
-import yargs from 'yargs';
 import pJSON from './package.json';
 
 var plugins = gLP({
@@ -68,27 +67,23 @@ gulp.task('test', () => {
 });
 
 gulp.task('release', () => {
-  var argv = yargs.options({
-    user: {
-      alias: 'u',
-      demand: true,
-      describe: 'User to create release as',
-      type: 'string'
-    }
-  }).argv;
-  
+  var user = process.env.GITHUB_USER;
   var token = process.env.GITHUB_TOKEN;
-  if (!token) {
-    console.log('You must first set an environment variable named "GITHUB_TOKEN".')
-    console.log('Please refer to the following for help.');
-    console.log('\t(https://help.github.com/articles/creating-an-access-token-for-command-line-use/)');
+  if (!user || !token) {
+    if (!user) {
+      console.log('You must set an environment variable named "GITHUB_USER" with your GitHub username.');
+    }
+    if (!token) {
+      console.log('You must first set an environment variable named "GITHUB_TOKEN".')
+      console.log('Please refer to the following for help.');
+      console.log('\t(https://help.github.com/articles/creating-an-access-token-for-command-line-use/)');
+    }
     process.exit(0);
   }
-  var notes = `**Released by**: ${argv.user}`;
-  // return gulp.src('build/bundle.*').pipe(plugins.release({
-  return gulp.src('build/blah').pipe(plugins.release({
+  
+  return gulp.src('build/bundle.*').pipe(plugins.release({
     token,
-    notes,
+    notes: `**Released by**: ${user}`,
     prerelease: (pJSON.version.split('.')[2] !== 0),
     manifest: pJSON
   }));
