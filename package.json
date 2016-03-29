@@ -8,6 +8,10 @@
     "test": "mocha --compilers js:babel-register",
     "docs": "jsdoc2md src/**/*.js --template jsdoc2md/README.hbs > README.md"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cmdPP/core.git"
+  },
   "keywords": [],
   "author": "Russell Hueske <hueske.russ690@gmail.com>",
   "license": "ISC",
@@ -21,6 +25,7 @@
     "eslint": "^2.5.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
+    "gulp-github-release": "^1.1.2",
     "gulp-load-plugins": "^1.2.0",
     "gulp-mocha": "^2.2.0",
     "gulp-sourcemaps": "^1.6.0",
