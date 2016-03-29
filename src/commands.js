@@ -362,10 +362,7 @@ function loadCommands() {
                 }
             },
             desc: () => {
-                var response = [
-                    "Purchases upgrades for certain commands.",
-                    "Available upgrades:"
-                ];
+                var response = [];
                 var incrementValue = this.increment + 1;
                 var incrementCost = Math.floor(incrementValue * 1.5);
                 
