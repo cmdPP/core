@@ -398,7 +398,11 @@ function loadCommands() {
                 for (var res of response) {
                     newResponse.push(`\t${res}`);
                 }
-                return newResponse;
+                return [
+                    "Purchases upgrades for certain commands.",
+                    "Available upgrades:",
+                    ...newResponse
+                ];
             }
         }
         // cheat: {
