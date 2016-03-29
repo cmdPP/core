@@ -112,6 +112,8 @@ class StorageContainer {
     
     
     set current(val) {
+        console.log("Type of val:", val);
+        console.log("Val:", val);
         if (typeof val === "string") {
             this._current = this._storages[val];
         } else if (typeof val === "object" && 'name' in val && val.name in this._storages) {
