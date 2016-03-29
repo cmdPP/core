@@ -12,7 +12,7 @@ import pJSON from './package.json';
 var plugins = gLP({
     rename: {
         'gulp-jsdoc-to-markdown': 'jsdocMD',
-        'github-release': 'release'
+        'gulp-github-release': 'release'
     }
 });
 
