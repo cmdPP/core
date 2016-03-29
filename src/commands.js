@@ -36,14 +36,14 @@ function loadCommands() {
                         }
                     }
                     var responseList = [
-                        "########################################",
+                        // "########################################",
                         "List of commands",
                         ""
                     ];
                     responseList.push(...availableCommands);
                     responseList.push(...[
                         '\nFor specific command help type "help [command]"',
-                        "########################################"
+                        // "########################################"
                     ]);
                     this.respond(...responseList);
                 }
