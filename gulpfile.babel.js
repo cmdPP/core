@@ -6,6 +6,8 @@ import browserify from 'browserify';
 import babel from 'babelify';
 import runSeq from 'run-sequence';
 import del from 'del';
+import fs from 'fs';
+import yargs from 'yargs';
 // import { exec } from 'child_process';
 import jsdocConf from './jsdoc.conf.json';
 import pJSON from './package.json';
@@ -14,7 +16,8 @@ var plugins = gLP({
   rename: {
     'gulp-jsdoc-to-markdown': 'jsdocMD',
     'gulp-github-release': 'release',
-    'gulp-gh-pages': 'pages'
+    'gulp-gh-pages': 'pages',
+    'gulp-tag-version': 'tagVersion'
   }
 });
 
@@ -69,7 +72,34 @@ gulp.task('test', () => {
   });
 });
 
-gulp.task('release', () => {
+function inc(type) {
+  return gulp.src('./package.json')
+    .pipe(plugins.bump({ type }).on('error', plugins.util.log))
+    .pipe(gulp.dest('./'));
+}
+
+gulp.task('docs:build', (cb) => {
+  gulp.src(['README.md', 'src/**/*.js'], { read: false }).pipe(plugins.jsdoc3(jsdocConf, cb));
+});
+
+gulp.task('docs:commit', () => {
+  return gulp.src('./docs/*')
+    .pipe(plugins.git.commit('Update docs'));
+});
+
+gulp.task('docs:push', () => {
+  return gulp.src('docs/**/*').pipe(plugins.pages());
+});
+
+gulp.task('docs:clean', () => {
+  return gulp.src(['.publish/**/*', 'docs/**/*']).pipe(plugins.clean());
+});
+
+gulp.task('docs', (cb) => {
+  return runSeq('docs:build', 'docs:push', 'docs:clean', cb);
+});
+
+gulp.task('github-release', () => {
   var user = process.env.GITHUB_USER;
   var token = process.env.GITHUB_TOKEN;
   if (!user || !token) {
@@ -92,23 +122,47 @@ gulp.task('release', () => {
   }));
 });
 
-gulp.task('docs:build', (cb) => {
-  gulp.src(['README.md', 'src/**/*.js'], { read: false }).pipe(plugins.jsdoc3(jsdocConf, cb));
+gulp.task('bump-patch', () => inc('patch'));
+gulp.task('bump-minor', () => inc('minor'));
+gulp.task('bump-major', () => inc('major'));
+
+gulp.task('commit-changes', () => {
+  return gulp.src('.')
+    .pipe(plugins.git.add())
+    .pipe(plugins.git.commit('Bumped version number.'));
 });
 
-gulp.task('docs:commit', () => {
-  return gulp.src('./docs/*')
-    .pipe(plugins.git.commit('Update docs'));
+gulp.task('push-changes', (cb) => {
+  plugins.git.push('origin', 'master', cb);
 });
 
-gulp.task('docs:push', () => {
-  return gulp.src('docs/**/*').pipe(plugins.pages());
+gulp.task('create-new-tag', (cb) => {
+  var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+  plugins.git.tag(version, `Created Tag for version: v${version}`, (err) => {
+    if (err) {
+      return cb(err);
+    }
+    plugins.git.push('origin', 'master', { args: '--tags' }, cb);
+  });
 });
 
-gulp.task('docs:clean', () => {
-  return gulp.src(['.publish/**/*', 'docs/**/*']).pipe(plugins.clean());
-});
-
-gulp.task('docs', (cb) => {
-  return runSeq('docs:build', 'docs:push', 'docs:clean', cb);
+gulp.task('release', (cb) => {
+  var argv = yargs.options({
+    bump: {
+      alias: 'b',
+      demand: false,
+      default: 'patch',
+      choices: ['patch', 'minor', 'major'],
+      type: 'string'
+    }
+  }).argv;
+  
+  runSeq(`bump-${argv.bump}`, 'commit-changes', 'push-changes', 'create-new-tag', 'github-release', (err) => {
+    if (err) {
+      console.log(err.message);
+    } else {
+      console.log('RELEASE FINISHED SUCCESSFULLY');
+    }
+    cb(err);
+  });
 });
