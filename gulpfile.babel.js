@@ -102,9 +102,13 @@ gulp.task('docs:commit', () => {
 });
 
 gulp.task('docs:push', () => {
-  return gulp.src('docs/**/*').pipe(plugins.pages()).pipe(plugins.clean());
+  return gulp.src('docs/**/*').pipe(plugins.pages());
+});
+
+gulp.task('docs:clean', () => {
+  return gulp.src(['.publish/**/*', 'docs/**/*']).pipe(plugins.clean());
 });
 
 gulp.task('docs', (cb) => {
-  return runSeq('docs:build', 'docs:push', cb);
+  return runSeq('docs:build', 'docs:push', 'docs:clean', cb);
 });
