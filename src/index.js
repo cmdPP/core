@@ -1,18 +1,9 @@
 /*eslint no-console: 0*/
 
-// /**
-//  * A CLI environment-like game
-//  * @module cmdpp-core
-//  */
-
 import filesize from 'filesize';
 import { loadCommands as loadCMDs } from './commands';
 import { getStorage } from './storage';
 import pJSON from '../package.json';
-
-// TODO: Replace current CMD#storage with an object containing storage data
-// TODO: Move CMD#_commands to CMD#Commands
-// TODO: Create more JSDoc
 
 /** Class representing the main game logic.
  * @typicalname cmd
@@ -101,8 +92,6 @@ class CMD {
             errorHandler,
             debug
         };
-        // var opts = Object.assign({}, defaults, options);
-        // options = opts;
 
         this.version = pJSON.version;
 
@@ -112,7 +101,6 @@ class CMD {
         this.increment = 1;
         this.autoIncrement = 1;
         this.isAutoMining = false;
-        // this.storage = "selectronTube";
         this.data = 0;
         this.counter = 0;
 
@@ -124,9 +112,7 @@ class CMD {
         this.updateFunc = options.funcs.update;
         this.resetFunc = options.funcs.reset;
         this.errHandlerFunc = options.funcs.errorHandler;
-        // this.loadStorage();
         this.storage = getStorage();
-        // this.storage = this.storages["selectronTube"];
         this.loadCommands();
         var customCommands = this.commandProvider();
         Object.assign(this._commands, customCommands);
@@ -141,7 +127,6 @@ class CMD {
             this._commands[cmdName] = cmd;
         }
 
-        // this.command("load");
         this.load();
         this.gameLoopInterval = undefined;
         this.gameLoop();
@@ -207,8 +192,6 @@ class CMD {
             this.gameLoopInterval = setInterval(() => {
                 this.counter++;
                 if (this.counter % 10 === 0) {
-                    // this.command.save(false);
-                    // this.command("save");
                     this.save();
                 }
                 if (this.isAutoMining) {
@@ -240,11 +223,6 @@ class CMD {
      * @return {boolean} If storage has enough space.
      */
     checkStorage(increment = this.increment) {
-        // if (increment === undefined) {
-        //     increment = this.increment;
-        // }
-        // return (this.data <= this.storages[this.storage].capacity);
-        // return ((this.data + increment) <= this.storages[this.storage].capacity);
         var check = this.storage.checkStorage(this.data, increment);
         if (this.debug) {
             console.log("Current data:", this.data);
@@ -286,7 +264,6 @@ class CMD {
             if (!(cmdWArgs[0] in this._commands)) {
                 this.respond("Command not found.");
             } else {
-                // console.log(cmdWArgs);
                 if (this._commands[cmdWArgs[0]].unlocked) {
                     this._commands[cmdWArgs[0]].func(...cmdWArgs.slice(1));
                 }
@@ -310,7 +287,6 @@ class CMD {
             money: this.money,
             increment: this.increment,
             autoIncrement: this.autoIncrement,
-            // storage: this.storage,
             storage: this.storage.name,
             unlocked: []
         };
@@ -356,9 +332,6 @@ class CMD {
                     this._commands[cmdName].unlocked = true;
                 }
             }
-            // for (var unlockedCMD of loadData.unlocked) {
-            //     this._commands[unlockedCMD].unlocked = true;
-            // }
             this.respond("Save loaded.");
         } else {
             this.respond("No save found.");
@@ -455,55 +428,3 @@ class CMD {
 
 export { CMD };
 export default CMD;
-
-// /**
-//  * Function to handle responses from the CMD object.
-//  * @callback respondCallback
-//  * @param {...*} txt - Responses
-//  */
-// 
-// /**
-//  * Function to handle saving progress.
-//  * @callback CMD~saveCallback
-//  * @param {Object} cmdData - Game progress to be saved.
-//  * @param {number} cmdData.data - Data collected.
-//  * @param {number} cmdData.money - Money collected.
-//  * @param {number} cmdData.increment - Increment value for mineData.
-//  * @param {number} cmdData.autoIncrement - Increment value for autoMine.
-//  * @param {string} cmdData.storage - Current storage value.
-//  * @param {string[]} cmdData.unlocked - Commands bought with buyCommand.
-//  * @return {Error | null} An error if encountered.
-//  */
-// 
-// /**
-//  * Function to handle saving progress.
-//  * @callback CMD~loadCallback
-//  * @return {Object} Game progress loaded from save.
-//  */
-// 
-// /**
-//  * Function to handle updating game values.
-//  * @callback CMD~updateCallback
-//  * @param {CMD} cmdObj - CMD object.
-//  */
-// 
-// /**
-//  * Function to handle thrown errors.
-//  * @callback CMD~errorHandlerCallback
-//  * @param {Error} err - Error thrown.
-//  */
-// 
-// /**
-//  * An object representing a command.
-//  * @typedef {Object} Command
-//  * @property {function} func - Function called when command is run.
-//  * @property {string|function} desc - Description for command.
-//  * @property {string|function|undefined} usage=null - How to use the command.
-//  * @property {number|undefined} price=0 - Price to pay in bytes for command.
-//  */
-// 
-// /**
-//  * Function to provide custom commands.
-//  * @callback CMD~commandProviderCallback
-//  * @return {Command} Object of custom commands.
-//  */
