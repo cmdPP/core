@@ -124,6 +124,19 @@ gulp.task('release', () => {
 // });
 
 
-gulp.task('docs', (cb) => {
+gulp.task('docs:build', (cb) => {
   gulp.src(['README.md', 'src/**/*.js'], { read: false }).pipe(plugins.jsdoc3(jsdocConf, cb));
+});
+
+gulp.task('docs:commit', () => {
+  return gulp.src('./docs/*')
+    .pipe(plugins.git.commit('Update docs'));
+});
+
+gulp.task('docs:push', () => {
+  return gulp.src('docs').pipe(plugins.subtree({ message: 'Update docs.' })).pipe(plugins.clean());
+});
+
+gulp.task('docs', (cb) => {
+  return runSeq('docs:build', 'docs:commit', 'docs:push', cb);
 });

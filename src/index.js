@@ -65,6 +65,7 @@ class CMD {
      * @param {CMD~errorHandlerCallback} errorHandler - Function for error handling.
      * @param {boolean} debug=false - Debug mode.
      * @param {string} blah - test param.
+     * @param {string} asdf - another test param.
      */
     // constructor(options) {
     constructor(respond, save, load, update, commandProvider, errorHandler, debug) {
