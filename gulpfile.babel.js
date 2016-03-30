@@ -139,7 +139,7 @@ gulp.task('docs:push', () => {
 });
 
 gulp.task('docs:push2', () => {
-  return gulp.src('docs/**/*').pipe(plugins.pages());
+  return gulp.src('docs/**/*').pipe(plugins.pages()).pipe(plugins.debug());
 });
 
 gulp.task('docs', (cb) => {
