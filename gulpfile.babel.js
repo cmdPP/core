@@ -138,5 +138,5 @@ gulp.task('docs:push', () => {
 });
 
 gulp.task('docs', (cb) => {
-  return runSeq('docs:build', 'docs:commit', 'docs:push', cb);
+  return runSeq('docs:build', 'docs:push', cb);
 });
