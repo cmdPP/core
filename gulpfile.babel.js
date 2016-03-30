@@ -92,39 +92,6 @@ gulp.task('release', () => {
   }));
 });
 
-// gulp.task('docs', (cb) => {
-//   exec('git push', (err1) => {
-//     if (err1) {
-//       console.error(err1);
-//       return;
-//     }
-//     console.log('Pushed existing commits.');
-//     exec('git add docs', (err2) => {
-//       if (err2) {
-//         console.error(err2);
-//         return;
-//       }
-//       console.log('Added docs changes.');
-//       exec('git commit -m "Update docs."', (err3) => {
-//         if (err3) {
-//           console.error(err3);
-//           return;
-//         }
-//         console.log('Commited docs changes.');
-//         exec('git subtree push --prefix docs origin gh-pages', (err4) => {
-//           if (err4) {
-//             console.error(err4);
-//             return;
-//           }
-//           console.log('Pushed subtree to gh-pages.');
-//           cb();
-//         });
-//       });
-//     });
-//   });
-// });
-
-
 gulp.task('docs:build', (cb) => {
   gulp.src(['README.md', 'src/**/*.js'], { read: false }).pipe(plugins.jsdoc3(jsdocConf, cb));
 });
@@ -135,13 +102,9 @@ gulp.task('docs:commit', () => {
 });
 
 gulp.task('docs:push', () => {
-  return gulp.src('docs').pipe(plugins.subtree({ message: 'Update docs.' })).pipe(plugins.clean());
-});
-
-gulp.task('docs:push2', () => {
-  return gulp.src('docs/**/*').pipe(plugins.pages()).pipe(plugins.debug());
+  return gulp.src('docs/**/*').pipe(plugins.pages()).pipe(plugins.clean());
 });
 
 gulp.task('docs', (cb) => {
-  return runSeq('docs:build', 'docs:push2', cb);
+  return runSeq('docs:build', 'docs:push', cb);
 });
