@@ -10,7 +10,11 @@ import fs from 'fs';
 import yargs from 'yargs';
 // import { exec } from 'child_process';
 import jsdocConf from './jsdoc.conf.json';
-import pJSON from './package.json';
+// import pJSON from './package.json';
+
+function getPack() {
+  return JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+}
 
 var plugins = gLP({
   rename: {
@@ -117,8 +121,9 @@ gulp.task('github-release', () => {
   return gulp.src('build/bundle.*').pipe(plugins.release({
     token,
     notes: `**Released by**: ${user}`,
-    prerelease: (pJSON.version.split('.')[2] !== 0),
-    manifest: pJSON
+    // prerelease: (pJSON.version.split('.')[2] !== 0),
+    prerelease: (getPack().version.split('.')[2] !== 0),
+    manifest: getPack()
   }));
 });
 
@@ -137,8 +142,8 @@ gulp.task('push-changes', (cb) => {
 });
 
 gulp.task('create-new-tag', (cb) => {
-  var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  plugins.git.tag(version, `Created Tag for version: v${version}`, (err) => {
+  let { version } = getPack();
+  plugins.git.tag('v'+version, `Created Tag for version: v${version}`, (err) => {
     if (err) {
       return cb(err);
     }
