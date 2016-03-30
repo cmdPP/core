@@ -13,7 +13,8 @@ import pJSON from './package.json';
 var plugins = gLP({
   rename: {
     'gulp-jsdoc-to-markdown': 'jsdocMD',
-    'gulp-github-release': 'release'
+    'gulp-github-release': 'release',
+    'gulp-gh-pages': 'pages'
   }
 });
 
@@ -137,6 +138,10 @@ gulp.task('docs:push', () => {
   return gulp.src('docs').pipe(plugins.subtree({ message: 'Update docs.' })).pipe(plugins.clean());
 });
 
+gulp.task('docs:push2', () => {
+  return gulp.src('docs/**/*').pipe(plugins.pages());
+});
+
 gulp.task('docs', (cb) => {
-  return runSeq('docs:build', 'docs:push', cb);
+  return runSeq('docs:build', 'docs:push2', cb);
 });
