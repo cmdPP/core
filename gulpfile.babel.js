@@ -6,6 +6,7 @@ import browserify from 'browserify';
 import babel from 'babelify';
 import runSeq from 'run-sequence';
 import del from 'del';
+import { exec } from 'child_process';
 import pJSON from './package.json';
 
 var plugins = gLP({
@@ -87,4 +88,36 @@ gulp.task('release', () => {
     prerelease: (pJSON.version.split('.')[2] !== 0),
     manifest: pJSON
   }));
+});
+
+gulp.task('docs', (cb) => {
+  exec('git push', (err1) => {
+    if (err1) {
+      console.error(err1);
+      return;
+    }
+    console.log('Pushed existing commits.');
+    exec('git add docs', (err2) => {
+      if (err2) {
+        console.error(err2);
+        return;
+      }
+      console.log('Added docs changes.');
+      exec('git commit -m "Update docs."', (err3) => {
+        if (err3) {
+          console.error(err3);
+          return;
+        }
+        console.log('Commited docs changes.');
+        exec('git subtree push --prefix docs origin gh-pages', (err4) => {
+          if (err4) {
+            console.error(err4);
+            return;
+          }
+          console.log('Pushed subtree to gh-pages.');
+          cb();
+        });
+      });
+    });
+  });
 });
