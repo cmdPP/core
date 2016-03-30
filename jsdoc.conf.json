@@ -1,0 +1,26 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "source": {
+        "include": ["src"],
+        "includePattern": ".+\\.js(doc)?$",
+        "excludePattern": "docs"
+    },
+    "templates": {
+        "systemName": "CMD++ Core",
+        "theme": "slate",
+        "outputSourceFiles": true,
+        "dateFormate": "YYYY/M/D",
+        "syntaxTheme": "dark",
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "linenums": true,
+        "sort": false
+    },
+    "opts": {
+        "template": "./node_modules/ink-docstrap/template",
+        "destination": "./docs/",
+        "readme": "README.md"
+    }
+}

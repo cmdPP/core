@@ -17,77 +17,92 @@ import pJSON from '../package.json';
 /** Class representing the main game logic.
  * @typicalname cmd
  * @class
+ * @example <caption>Instantiate a CMD object.</caption>
+ * import { CMD } from 'cmdpp-core';
+ * import fs from 'fs';
+ * var cmdContainer = {
+ *   data: 0,
+ *   money: 0
+ * };
+ * var cmd = new CMD({
+ *   (...txt) => console.log(...txt),
+ *   (cmdData) => fs.writeFileSync('save.json', JSON.stringify(cmdData, null, 2)),
+ *   () => return JSON.parse(fs.readFileSync('save.json')),
+ *   (cmdObj) => {
+ *     cmdContainer.data = cmdObj.data;
+ *     cmdContainer.money = cmdObj.money;
+ *   },
+ *   function() {
+ *     return {
+ *       stringDesc: {
+ *         func: () => this.respond("First test run!"),
+ *         desc: "Desc can be a string"
+ *       },
+ *       functionDesc: {
+ *         func: () => this.respond("Second test run!"),
+ *         desc: () => "Desc can also be a function that returns a string or an array of strings."
+ *       },
+ *       buyableCommand: {
+ *         func: () => this.respond("buyable command!"),
+ *         desc: 'This command must be bought with the "buyCommand" command.',
+ *         price: 10
+ *       }
+ *     };
+ *   },
+ *   (err) => console.error(err),
+ *   true
+ * });
  */
 class CMD {
 
     /**
      * Instantiate the CMD object
-     * @constructor
-     * @param {Object} options - Options
-     * @param {Boolean} opts.debug=false - Debug mode.
-     * @param {Object} opts.funcs - Object containing functions to be used by CMD.
-     * @param {CMD~respondCallback} opts.funcs.respond - Function for responding.
-     * @param {CMD~saveCallback} opts.funcs.save - Function for saving.
-     * @param {CMD~loadCallback} opts.funcs.load - Function for loading.
-     * @param {CMD~updateCallback} opts.funcs.update - Function for updating.
-     * @param {CMD~errorHandlerCallback} opts.errorHandler - Function for error handling.
-     * @param {CMD~commandProviderCallback} opts.commandProvider - Function to provide custom commands. Cannot be ES6 arrow function.
-     * @example
-     * ```js
-     * import { CMD } from 'cmdpp-core';
-     * import fs from 'fs';
-     * var cmdContainer = {
-     *   data: 0,
-     *   money: 0
-     * };
-     * var cmd = new CMD({
-     *   debug: false,
-     *   funcs: {
-     *     respond: (...txt) => console.log(...txt),
-     *     save: (cmdData) => fs.writeFileSync('save.json', JSON.stringify(cmdData, null, 2)),
-     *     load: () => return JSON.parse(fs.readFileSync('save.json')),
-     *     update: (cmdObj) => {
-     *       cmdContainer.data = cmdObj.data;
-     *       cmdContainer.money = cmdObj.money;
-     *     }
-     *   },
-     *   errorHandler: (err) => console.error(err),
-     *   commandProvider: function() {
-     *     return {
-     *       stringDesc: {
-     *         func: () => this.respond("First test run!"),
-     *         desc: "Desc can be a string"
-     *       },
-     *       functionDesc: {
-     *         func: () => this.respond("Second test run!"),
-     *         desc: () => "Desc can also be a function that returns a string or an array of strings."
-     *       },
-     *       buyableCommand: {
-     *         func: () => this.respond("buyable command!"),
-     *         desc: 'This command must be bought with the "buyCommand" command.',
-     *         price: 10
-     *       }
-     *     };
-     *   }
-     * });
-     * ```
+     * @param {CMD~respondCallback} respond - Function for responding.
+     * @param {CMD~saveCallback} save - Function for saving.
+     * @param {CMD~loadCallback} load - Function for loading.
+     * @param {CMD~updateCallback} update - Function for updating.
+     * @param {CMD~commandProviderCallback} commandProvider - Function to provide custom commands. Cannot be ES6 arrow function.
+     * @param {CMD~errorHandlerCallback} errorHandler - Function for error handling.
+     * @param {boolean} debug=false - Debug mode.
      */
-    constructor(options) {
-        var defaults = {
-            debug: false,
+    // constructor(options) {
+    constructor(respond, save, load, update, commandProvider, errorHandler, debug) {
+        // var defaults = {
+        //     debug: false,
+        //     funcs: {
+        //         respond: (...txt) => console.log(...txt),
+        //         save: () => console.warn('No save function has been set.'),
+        //         load: () => console.warn('No load function has been set.'),
+        //         update: () => console.warn('No update function has been set.'),
+        //         // reset: () => console.warn('No reset function has been set.'),
+        //         errorHandler: (e) => console.error(e)
+        //     },
+        //     errorHandler: (e) => console.error(e),
+        //     commandProvider: function() {}
+        // };
+        
+        respond = respond || ((...txt) => console.log(...txt));
+        save = save || (() => console.warn('No save function has been set.'));
+        load = load || (() => console.warn('No load function has been set.'));
+        update = update || (() => console.warn('No update function has been set.'));
+        
+        commandProvider = commandProvider || function() {};
+        errorHandler = errorHandler || ((e) => console.error(e));
+        debug = debug || false;
+        
+        var options = {
             funcs: {
-                respond: (...txt) => console.log(...txt),
-                save: () => console.warn('No save function has been set.'),
-                load: () => console.warn('No load function has been set.'),
-                update: () => console.warn('No update function has been set.'),
-                // reset: () => console.warn('No reset function has been set.'),
-                errorHandler: (e) => console.error(e)
+                respond,
+                save,
+                load,
+                update
             },
-            errorHandler: (e) => console.error(e),
-            commandProvider: function() {}
+            commandProvider,
+            errorHandler,
+            debug
         };
-        var opts = Object.assign({}, defaults, options);
-        options = opts;
+        // var opts = Object.assign({}, defaults, options);
+        // options = opts;
 
         this.version = pJSON.version;
 
@@ -131,7 +146,59 @@ class CMD {
         this.gameLoopInterval = undefined;
         this.gameLoop();
     }
-
+    
+    /**
+     * Function to handle responses from the CMD object.
+     * @callback CMD~respondCallback
+     * @param {...*} txt - Responses
+     */
+    
+    /**
+     * Function to handle saving progress.
+     * @callback CMD~saveCallback
+     * @param {Object} cmdData - Game progress to be saved.
+     * @param {number} cmdData.data - Data collected.
+     * @param {number} cmdData.money - Money collected.
+     * @param {number} cmdData.increment - Increment value for mineData.
+     * @param {number} cmdData.autoIncrement - Increment value for autoMine.
+     * @param {string} cmdData.storage - Current storage value.
+     * @param {string[]} cmdData.unlocked - Commands bought with buyCommand.
+     * @return {Error | null} An error if encountered.
+     */
+    
+    /**
+     * Function to handle saving progress.
+     * @callback CMD~loadCallback
+     * @return {Object} Game progress loaded from save.
+     */
+    
+    /**
+     * Function to handle updating game values.
+     * @callback CMD~updateCallback
+     * @param {CMD} cmdObj - CMD object.
+     */
+      
+    /**
+     * An object representing a command.
+     * @typedef {Object} CMD~Command
+     * @property {function} func - Function called when command is run.
+     * @property {string|function} desc - Description for command.
+     * @property {string|function|undefined} usage=undefined - How to use the command.
+     * @property {number|undefined} price=0 - Price to pay in bytes for command.
+     */
+     
+    /**
+     * Function to provide custom commands.
+     * @callback CMD~commandProviderCallback
+     * @return {CMD~Command} Object of custom commands.
+     */
+     
+    /**
+     * Function to handle thrown errors.
+     * @callback CMD~errorHandlerCallback
+     * @param {Error} err - Error thrown.
+     */
+    
     /**
      * Start the game loop.
      */
@@ -389,43 +456,43 @@ class CMD {
 export { CMD };
 export default CMD;
 
-/**
- * Function to handle responses from the CMD object.
- * @callback CMD~respondCallback
- * @param {...*} txt - Responses
- */
-
-/**
- * Function to handle saving progress.
- * @callback CMD~saveCallback
- * @param {Object} cmdData - Game progress to be saved.
- * @param {number} cmdData.data - Data collected.
- * @param {number} cmdData.money - Money collected.
- * @param {number} cmdData.increment - Increment value for mineData.
- * @param {number} cmdData.autoIncrement - Increment value for autoMine.
- * @param {string} cmdData.storage - Current storage value.
- * @param {string[]} cmdData.unlocked - Commands bought with buyCommand.
- * @return {Error | null} An error if encountered.
- */
-
-/**
- * Function to handle saving progress.
- * @callback CMD~loadCallback
- * @return {Object} Game progress loaded from save.
- */
-
-/**
- * Function to handle updating game values.
- * @callback CMD~updateCallback
- * @param {CMD} cmdObj - CMD object.
- */
-
-/**
- * Function to handle thrown errors.
- * @callback CMD~errorHandlerCallback
- * @param {Error} err - Error thrown.
- */
-
+// /**
+//  * Function to handle responses from the CMD object.
+//  * @callback respondCallback
+//  * @param {...*} txt - Responses
+//  */
+// 
+// /**
+//  * Function to handle saving progress.
+//  * @callback CMD~saveCallback
+//  * @param {Object} cmdData - Game progress to be saved.
+//  * @param {number} cmdData.data - Data collected.
+//  * @param {number} cmdData.money - Money collected.
+//  * @param {number} cmdData.increment - Increment value for mineData.
+//  * @param {number} cmdData.autoIncrement - Increment value for autoMine.
+//  * @param {string} cmdData.storage - Current storage value.
+//  * @param {string[]} cmdData.unlocked - Commands bought with buyCommand.
+//  * @return {Error | null} An error if encountered.
+//  */
+// 
+// /**
+//  * Function to handle saving progress.
+//  * @callback CMD~loadCallback
+//  * @return {Object} Game progress loaded from save.
+//  */
+// 
+// /**
+//  * Function to handle updating game values.
+//  * @callback CMD~updateCallback
+//  * @param {CMD} cmdObj - CMD object.
+//  */
+// 
+// /**
+//  * Function to handle thrown errors.
+//  * @callback CMD~errorHandlerCallback
+//  * @param {Error} err - Error thrown.
+//  */
+// 
 // /**
 //  * An object representing a command.
 //  * @typedef {Object} Command
@@ -434,9 +501,9 @@ export default CMD;
 //  * @property {string|function|undefined} usage=null - How to use the command.
 //  * @property {number|undefined} price=0 - Price to pay in bytes for command.
 //  */
-
-/**
- * Function to provide custom commands.
- * @callback CMD~commandProviderCallback
- * @return {Command} Object of custom commands.
- */
+// 
+// /**
+//  * Function to provide custom commands.
+//  * @callback CMD~commandProviderCallback
+//  * @return {Command} Object of custom commands.
+//  */

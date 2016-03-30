@@ -9,35 +9,35 @@ import del from 'del';
 import pJSON from './package.json';
 
 var plugins = gLP({
-    rename: {
-        'gulp-jsdoc-to-markdown': 'jsdocMD',
-        'gulp-github-release': 'release'
-    }
+  rename: {
+    'gulp-jsdoc-to-markdown': 'jsdocMD',
+    'gulp-github-release': 'release'
+  }
 });
 
 gulp.task('browser:build', () => {
-    return browserify('./src/web.js', { debug: true })
-        .ignore('moniker')
-        .ignore('charlatan')
-        .transform(babel, { presets: ['es2015'] })
-        .bundle()
-        // .pipe(source(`bundle-${pJSON.version}.js`))
-        .pipe(source('bundle.js'))
-        .pipe(buffer())
-        .pipe(plugins.sourcemaps.init({ loadMaps: true }))
-        .pipe(plugins.uglify())
-        .on('error', plugins.util.log)
-        .pipe(plugins.sourcemaps.write('./'))
-        .pipe(gulp.dest('./build'));
+  return browserify('./src/web.js', { debug: true })
+    .ignore('moniker')
+    .ignore('charlatan')
+    .transform(babel, { presets: ['es2015'] })
+    .bundle()
+    // .pipe(source(`bundle-${pJSON.version}.js`))
+    .pipe(source('bundle.js'))
+    .pipe(buffer())
+    .pipe(plugins.sourcemaps.init({ loadMaps: true }))
+    .pipe(plugins.uglify())
+    .on('error', plugins.util.log)
+    .pipe(plugins.sourcemaps.write('./'))
+    .pipe(gulp.dest('./build'));
     // return bundling('./src/web.js', (b) => b.transform(babel, { presets: ['es2015'] }));
 });
 
 gulp.task('browser:clean', () => {
-    return del('build/**/*');
+  return del('build/**/*');
 });
 
 gulp.task('browser', (cb) => {
-    return runSeq('browser:clean', 'browser:build', cb);
+  return runSeq('browser:clean', 'browser:build', cb);
 });
 
 gulp.task('babel:build', () => {
