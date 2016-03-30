@@ -58,20 +58,6 @@ class CMD {
      */
     // constructor(options) {
     constructor(respond, save, load, update, commandProvider, errorHandler, debug) {
-        // var defaults = {
-        //     debug: false,
-        //     funcs: {
-        //         respond: (...txt) => console.log(...txt),
-        //         save: () => console.warn('No save function has been set.'),
-        //         load: () => console.warn('No load function has been set.'),
-        //         update: () => console.warn('No update function has been set.'),
-        //         // reset: () => console.warn('No reset function has been set.'),
-        //         errorHandler: (e) => console.error(e)
-        //     },
-        //     errorHandler: (e) => console.error(e),
-        //     commandProvider: function() {}
-        // };
-        
         respond = respond || ((...txt) => console.log(...txt));
         save = save || (() => console.warn('No save function has been set.'));
         load = load || (() => console.warn('No load function has been set.'));

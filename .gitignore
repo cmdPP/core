@@ -38,3 +38,4 @@ build
 test_save.json
 .eslint*
 .publish
+.publishrc

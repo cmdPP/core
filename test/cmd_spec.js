@@ -16,26 +16,12 @@ import jsonfile from 'jsonfile';
 //     update: (cmdObj) => {}
 // });
 var responses = [];
-var cmd = new CMD({
-    debug: false,
-    funcs: {
-        respond: (...txt) => {responses.push(...txt)},
-        save: (cmdData) => jsonfile.writeFileSync('test_save.json', cmdData, { spaces: 2 }),
-        load: () => jsonfile.readFileSync('test_save.json'),
-        update: () => {},
-        // reset: () => {
-        //     var cmdData = {
-        //         data: 0,
-        //         money: 0,
-        //         increment: 1,
-        //         autoIncrement: 1,
-        //         storage: "selectronTube",
-        //         unlocked: []
-        //     };
-        //     jsonfile.writeFileSync('test_save.json', cmdData, { spaces: 2 });
-        // }
-    },
-    commandProvider: function() {
+var cmd = new CMD(
+    (...txt) => {responses.push(...txt)},
+    (cmdData) => jsonfile.writeFileSync('test_save.json', cmdData, { spaces: 2 }),
+    () => jsonfile.readFileSync('test_save.json'),
+    () => {},
+    function() {
         return {
             cmdOne: {
                 func: (arg) => {
@@ -46,7 +32,7 @@ var cmd = new CMD({
             }
         }
     }
-})
+);
 
 describe('CMD', () => {
     it('returns the correct version', () => {
