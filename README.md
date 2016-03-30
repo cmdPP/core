@@ -12,4 +12,4 @@
 - &#10003; Add storage
 - &#10003; Add unit tests.
 
-### Documentation
+### [Documentation](cmdpp.github.io/core/)
