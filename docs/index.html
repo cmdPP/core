@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>CMD++ Core Index</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">CMD++ Core</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="CMD.html">CMD</a></li><li><a href="Storage.html">Storage</a></li><li><a href="StorageContainer.html">StorageContainer</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		<div class="col-sm-3 col-md-3">
+            <form class="navbar-form" role="search">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+    <section class="readme-section">
+        <article><h1>CMD++ Core</h1><p><a href="https://nodei.co/npm/cmdpp-core/"><img src="https://nodei.co/npm/cmdpp-core.png?downloads=true" alt="NPM"></a></p>
+<p><a href="https://gitter.im/cmdPP/core?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/cmdPP/core.svg" alt="Join the chat at https://gitter.im/cmdPP/core"></a></p>
+<h3>ToDos</h3><ul>
+<li>&#10003; Fully integrate code from previous repository before storage was added.</li>
+<li>&#10003; Implement help delimiter (In Node application, &amp;nbsp is plain text, not HTML).</li>
+<li>&#10007; Implement <a href="https://github.com/jettcrowson/jettcrowson.github.io#todo">original todos</a>.</li>
+<li>&#10003; Add storage</li>
+<li>&#10003; Add unit tests.</li>
+</ul>
+<h2>API</h2><h3>Classes</h3><ul>
+<li><code><a href="#CMD">CMD</a></code> - Class representing the main game logic</li>
+<li><code><a href="#Storage">Storage</a></code> - Class representing a storage object.</li>
+<li><code><a href="#StorageContainer">StorageContainer</a></code> - Class representing a container for all Storage instances, as well as a representation of the current Storage instance.</li>
+</ul>
+<p><a name="CMD"></a></p>
+<h2>CMD</h2><p>Class representing the main game logic.</p>
+<p><strong>Kind</strong>: global class  </p>
+<ul>
+<li><a href="#CMD">CMD</a><ul>
+<li><a href="#new_CMD_new">new CMD(options)</a></li>
+<li><em>instance</em><ul>
+<li><a href="#CMD+gameLoop">.gameLoop()</a></li>
+<li><a href="#CMD+respond">.respond(...txt)</a></li>
+<li><a href="#CMD+checkStorage">.checkStorage(increment)</a> ⇒ <code>boolean</code></li>
+<li><a href="#CMD+command">.command(str)</a></li>
+<li><a href="#CMD+update">.update()</a></li>
+<li><a href="#CMD+save">.save()</a></li>
+<li><a href="#CMD+load">.load()</a></li>
+<li><a href="#CMD+addData">.addData(amt)</a> ⇒ <code>boolean</code></li>
+<li><a href="#CMD+removeData">.removeData(amt)</a> ⇒ <code>boolean</code></li>
+<li><a href="#CMD+addMoney">.addMoney(amt)</a></li>
+<li><a href="#CMD+removeMoney">.removeMoney(amt)</a> ⇒ <code>boolean</code></li>
+<li><a href="#CMD+formatBytes">.formatBytes()</a> ⇒</li>
+<li><a href="#CMD+formatter">.formatter(size)</a> ⇒</li>
+<li><a href="#CMD+reset">.reset()</a></li>
+</ul>
+</li>
+<li><em>inner</em><ul>
+<li><a href="#CMD..respondCallback">~respondCallback</a> : <code>function</code></li>
+<li><a href="#CMD..saveCallback">~saveCallback</a> ⇒ <code>Error</code> &#124; <code>null</code></li>
+<li><a href="#CMD..loadCallback">~loadCallback</a> ⇒ <code>Object</code></li>
+<li><a href="#CMD..updateCallback">~updateCallback</a> : <code>function</code></li>
+<li><a href="#CMD..errorHandlerCallback">~errorHandlerCallback</a> : <code>function</code></li>
+<li><a href="#CMD..commandProviderCallback">~commandProviderCallback</a> ⇒ <code>Command</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><a name="new_CMD_new"></a></p>
+<h3>new CMD(options)</h3><p>Instantiate the CMD object</p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>options</td>
+<td><code>Object</code></td>
+<td></td>
+<td>Options</td>
+</tr>
+<tr>
+<td>opts.debug</td>
+<td><code>Boolean</code></td>
+<td><code>false</code></td>
+<td>Debug mode.</td>
+</tr>
+<tr>
+<td>opts.funcs</td>
+<td><code>Object</code></td>
+<td></td>
+<td>Object containing functions to be used by CMD.</td>
+</tr>
+<tr>
+<td>opts.funcs.respond</td>
+<td><code><a href="#CMD..respondCallback">respondCallback</a></code></td>
+<td></td>
+<td>Function for responding.</td>
+</tr>
+<tr>
+<td>opts.funcs.save</td>
+<td><code><a href="#CMD..saveCallback">saveCallback</a></code></td>
+<td></td>
+<td>Function for saving.</td>
+</tr>
+<tr>
+<td>opts.funcs.load</td>
+<td><code><a href="#CMD..loadCallback">loadCallback</a></code></td>
+<td></td>
+<td>Function for loading.</td>
+</tr>
+<tr>
+<td>opts.funcs.update</td>
+<td><code><a href="#CMD..updateCallback">updateCallback</a></code></td>
+<td></td>
+<td>Function for updating.</td>
+</tr>
+<tr>
+<td>opts.errorHandler</td>
+<td><code><a href="#CMD..errorHandlerCallback">errorHandlerCallback</a></code></td>
+<td></td>
+<td>Function for error handling.</td>
+</tr>
+<tr>
+<td>opts.commandProvider</td>
+<td><code><a href="#CMD..commandProviderCallback">commandProviderCallback</a></code></td>
+<td></td>
+<td>Function to provide custom commands. Cannot be ES6 arrow function.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example</strong>  </p>
+<pre class="prettyprint source lang-js"><code>import { CMD } from 'cmdpp-core';
+import fs from 'fs';
+var cmdContainer = {
+  data: 0,
+  money: 0
+};
+var cmd = new CMD({
+  debug: false,
+  funcs: {
+    respond: (...txt) => console.log(...txt),
+    save: (cmdData) => fs.writeFileSync('save.json', JSON.stringify(cmdData, null, 2)),
+    load: () => return JSON.parse(fs.readFileSync('save.json')),
+    update: (cmdObj) => {
+      cmdContainer.data = cmdObj.data;
+      cmdContainer.money = cmdObj.money;
+    }
+  },
+  errorHandler: (err) => console.error(err),
+  commandProvider: function() {
+    return {
+      stringDesc: {
+        func: () => this.respond(&quot;First test run!&quot;),
+        desc: &quot;Desc can be a string&quot;
+      },
+      functionDesc: {
+        func: () => this.respond(&quot;Second test run!&quot;),
+        desc: () => &quot;Desc can also be a function that returns a string or an array of strings.&quot;
+      },
+      buyableCommand: {
+        func: () => this.respond(&quot;buyable command!&quot;),
+        desc: 'This command must be bought with the &quot;buyCommand&quot; command.',
+        price: 10
+      }
+    };
+  }
+});</code></pre><p><a name="CMD+gameLoop"></a></p>
+<h3>cmd.gameLoop()</h3><p>Start the game loop.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code><br><a name="CMD+respond"></a></p>
+<h3>cmd.respond(...txt)</h3><p>Send response to respond function from constructor</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>...txt</td>
+<td><code>string</code></td>
+<td>Strings to be sent to respond function.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD+checkStorage"></a></p>
+<h3>cmd.checkStorage(increment) ⇒ <code>boolean</code></h3><p>Check if storage is full.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code><br><strong>Returns</strong>: <code>boolean</code> - If storage has enough space.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increment</td>
+<td><code>number</code> &#124; <code>undefined</code></td>
+<td>Increment to check against. If undefined, equal to CMD#increment.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD+command"></a></p>
+<h3>cmd.command(str)</h3><p>Run command</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>str</td>
+<td><code>string</code></td>
+<td>Command to be ran.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD+update"></a></p>
+<h3>cmd.update()</h3><p>Run update function from constructor to update game values</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code><br><a name="CMD+save"></a></p>
+<h3>cmd.save()</h3><p>Save game progress</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code><br><a name="CMD+load"></a></p>
+<h3>cmd.load()</h3><p>Load game progress</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code><br><a name="CMD+addData"></a></p>
+<h3>cmd.addData(amt) ⇒ <code>boolean</code></h3><p>Add data</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code><br><strong>Returns</strong>: <code>boolean</code> - if data was able to be added.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>amt</td>
+<td><code>number</code></td>
+<td>Amount to add.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD+removeData"></a></p>
+<h3>cmd.removeData(amt) ⇒ <code>boolean</code></h3><p>Remove data</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code><br><strong>Returns</strong>: <code>boolean</code> - if data was able to be removed.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>amt</td>
+<td><code>number</code></td>
+<td>Amount to remove.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD+addMoney"></a></p>
+<h3>cmd.addMoney(amt)</h3><p>Add money</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>amt</td>
+<td><code>number</code></td>
+<td>Amount to add.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD+removeMoney"></a></p>
+<h3>cmd.removeMoney(amt) ⇒ <code>boolean</code></h3><p>Remove money</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code><br><strong>Returns</strong>: <code>boolean</code> - if money was able to be removed.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>amt</td>
+<td><code>number</code></td>
+<td>Amount to remove.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD+formatBytes"></a></p>
+<h3>cmd.formatBytes() ⇒</h3><p>Format bytes into a human-readable format</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code><br><strong>Returns</strong>: CMD#data in human-readable format<br><a name="CMD+formatter"></a></p>
+<h3>cmd.formatter(size) ⇒</h3><p>Format number into a human-readable format</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code><br><strong>Returns</strong>: size in human-readable format  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>size</td>
+<td><code>number</code></td>
+<td>Number to be formatted.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD+reset"></a></p>
+<h3>cmd.reset()</h3><p>Reset game progress</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#CMD">CMD</a></code><br><a name="CMD..respondCallback"></a></p>
+<h3>cmd~respondCallback : <code>function</code></h3><p>Function to handle responses from the CMD object.</p>
+<p><strong>Kind</strong>: inner typedef of <code><a href="#CMD">CMD</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>...txt</td>
+<td><code>*</code></td>
+<td>Responses</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD..saveCallback"></a></p>
+<h3>cmd~saveCallback ⇒ <code>Error</code> &#124; <code>null</code></h3><p>Function to handle saving progress.</p>
+<p><strong>Kind</strong>: inner typedef of <code><a href="#CMD">CMD</a></code><br><strong>Returns</strong>: <code>Error</code> &#124; <code>null</code> - An error if encountered.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cmdData</td>
+<td><code>Object</code></td>
+<td>Game progress to be saved.</td>
+</tr>
+<tr>
+<td>cmdData.data</td>
+<td><code>number</code></td>
+<td>Data collected.</td>
+</tr>
+<tr>
+<td>cmdData.money</td>
+<td><code>number</code></td>
+<td>Money collected.</td>
+</tr>
+<tr>
+<td>cmdData.increment</td>
+<td><code>number</code></td>
+<td>Increment value for mineData.</td>
+</tr>
+<tr>
+<td>cmdData.autoIncrement</td>
+<td><code>number</code></td>
+<td>Increment value for autoMine.</td>
+</tr>
+<tr>
+<td>cmdData.storage</td>
+<td><code>string</code></td>
+<td>Current storage value.</td>
+</tr>
+<tr>
+<td>cmdData.unlocked</td>
+<td><code>Array.&lt;string&gt;</code></td>
+<td>Commands bought with buyCommand.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD..loadCallback"></a></p>
+<h3>cmd~loadCallback ⇒ <code>Object</code></h3><p>Function to handle saving progress.</p>
+<p><strong>Kind</strong>: inner typedef of <code><a href="#CMD">CMD</a></code><br><strong>Returns</strong>: <code>Object</code> - Game progress loaded from save.<br><a name="CMD..updateCallback"></a></p>
+<h3>cmd~updateCallback : <code>function</code></h3><p>Function to handle updating game values.</p>
+<p><strong>Kind</strong>: inner typedef of <code><a href="#CMD">CMD</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cmdObj</td>
+<td><code><a href="#CMD">CMD</a></code></td>
+<td>CMD object.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD..errorHandlerCallback"></a></p>
+<h3>cmd~errorHandlerCallback : <code>function</code></h3><p>Function to handle thrown errors.</p>
+<p><strong>Kind</strong>: inner typedef of <code><a href="#CMD">CMD</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>err</td>
+<td><code>Error</code></td>
+<td>Error thrown.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD..commandProviderCallback"></a></p>
+<h3>cmd~commandProviderCallback ⇒ <code>Command</code></h3><p>Function to provide custom commands.</p>
+<p><strong>Kind</strong>: inner typedef of <code><a href="#CMD">CMD</a></code><br><strong>Returns</strong>: <code>Command</code> - Object of custom commands.  </p>
+<p><a name="CMD..respondCallback"></a></p>
+<h4>respondCallback(...txt)</h4><p>Function to handle responses from the CMD object.</p>
+<p><strong>Kind</strong>: anonymous function passed to <code><a href="#new_module_cmdpp-core..CMD_new">new CMD(options)</a></code></p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>...txt</td>
+<td><code>string</code></td>
+<td>Responses</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD..saveCallback"></a></p>
+<h4>saveCallback(cmdData)</h4><p>Function to handle saving progress.</p>
+<p><strong>Kind</strong>: anonymous function passed to <code><a href="#new_module_cmdpp-core..CMD_new">new CMD(options)</a></code><br><strong>Returns</strong>: <code><a href="https://nodejs.org/api/errors.html">Error</a></code> &#124; <code>null</code> - An error if encountered.</p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cmdData</td>
+<td><code>object</code></td>
+<td>Game progress to be saved.</td>
+</tr>
+<tr>
+<td>cmdData.data</td>
+<td><code>number</code></td>
+<td>Data collected.</td>
+</tr>
+<tr>
+<td>cmdData.money</td>
+<td><code>number</code></td>
+<td>Money collected.</td>
+</tr>
+<tr>
+<td>cmdData.increment</td>
+<td><code>number</code></td>
+<td>Increment value for mineData.</td>
+</tr>
+<tr>
+<td>cmdData.autoIncrement</td>
+<td><code>number</code></td>
+<td>Increment value for autoMine.</td>
+</tr>
+<tr>
+<td>cmdData.storage</td>
+<td><code>string</code></td>
+<td>Current storage value.</td>
+</tr>
+<tr>
+<td>cmdData.unlocked</td>
+<td><code>string[]</code></td>
+<td>Commands bought with buyCommand</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD..loadCallback"></a></p>
+<h4>loadCallback()</h4><p>Function to handle saving progress.</p>
+<p><strong>Kind</strong>: anonymous function passed to <code><a href="#new_module_cmdpp-core..CMD_new">new CMD(options)</a></code><br><strong>Returns</strong>: <code>Object</code> - Game progress loaded from save.</p>
+<p><a name="CMD..updateCallback"></a></p>
+<h4>updateCallback(cmdObj)</h4><p>Function to handle updating game values.</p>
+<p><strong>Kind</strong>: anonymous function passed to <code><a href="#new_module_cmdpp-core..CMD_new">new CMD(options)</a></code></p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cmdObj</td>
+<td><code><a href="#module_cmdpp-core..CMD">CMD</a></code></td>
+<td>CMD object.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD..errorHandlerCallback"></a></p>
+<h4>errorHandlerCallback(err)</h4><p>Function to handle thrown errors.</p>
+<p><strong>Kind</strong>: anonymous function passed to <code><a href="#new_module_cmdpp-core..CMD_new">new CMD(options)</a></code></p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>err</td>
+<td><code><a href="https://nodejs.org/api/errors.html">Error</a></code></td>
+<td>Error thrown</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CMD..commandProviderCallback"></a></p>
+<h4>commandProviderCallback()</h4><p>Function to provide custom commands.</p>
+<p><strong>Kind</strong>: anonymous function passed to <code><a href="#new_module_cmdpp-core..CMD_new">new CMD(options)</a></code><br><strong>Returns</strong>: <code>{<a href="#module_cmdpp-core..Command">Command</a>}</code> - Object of custom commands.</p>
+<p><a name="module_cmdpp-core..Command"></a></p>
+<h3>Command : <code>Object</code></h3><p>An object representing a command.</p>
+<p><strong>Kind</strong>: inner typedef of <code><a href="#module_cmdpp-core">cmdpp-core</a></code><br><strong>Properties</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>func</td>
+<td><code>function</code></td>
+<td></td>
+<td>Function called when command is run.</td>
+</tr>
+<tr>
+<td>desc</td>
+<td><code>string</code> &#124; <code>function</code></td>
+<td></td>
+<td>Description for command.</td>
+</tr>
+<tr>
+<td>usage</td>
+<td><code>string</code> &#124; <code>function</code> &#124; <code>undefined</code></td>
+<td><code>null</code></td>
+<td>How to use the command.</td>
+</tr>
+<tr>
+<td>price</td>
+<td><code>number</code> &#124; <code>undefined</code></td>
+<td><code>0</code></td>
+<td>Price to pay in bytes for command.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Storage"></a></p>
+<h2>Storage</h2><p>Class representing a storage object.</p>
+<p><strong>Kind</strong>: global class<br><strong>Typeicalname</strong>: storageObj  </p>
+<ul>
+<li><a href="#Storage">Storage</a><ul>
+<li><a href="#new_Storage_new">new Storage(name, idx, prev)</a></li>
+<li><a href="#Storage+name">.name</a></li>
+<li><a href="#Storage+idx">.idx</a></li>
+<li><a href="#Storage+capacity">.capacity</a></li>
+<li><a href="#Storage+price">.price</a></li>
+<li><a href="#Storage+prev">.prev</a></li>
+</ul>
+</li>
+</ul>
+<p><a name="new_Storage_new"></a></p>
+<h3>new Storage(name, idx, prev)</h3><p>Instantiate a Storage object</p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td><code>string</code></td>
+<td>Name of storage object.</td>
+</tr>
+<tr>
+<td>idx</td>
+<td><code>number</code></td>
+<td>Index in list of StorageContainer's storage objects.</td>
+</tr>
+<tr>
+<td>prev</td>
+<td><code>string</code> &#124; <code>undefined</code></td>
+<td>Name of Storage object preceding this object in list of StorageContainer's storage objects.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Storage+name"></a></p>
+<h3>storage.name</h3><p><strong>Kind</strong>: instance property of <code><a href="#Storage">Storage</a></code><br><strong>Properties</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td><code>string</code></td>
+<td>Name of storage object</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Storage+idx"></a></p>
+<h3>storage.idx</h3><p><strong>Kind</strong>: instance property of <code><a href="#Storage">Storage</a></code><br><strong>Properties</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>idx</td>
+<td><code>number</code></td>
+<td>Index in list of StorageContainer's storage objects.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Storage+capacity"></a></p>
+<h3>storage.capacity</h3><p><strong>Kind</strong>: instance property of <code><a href="#Storage">Storage</a></code><br><strong>Properties</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>capacity</td>
+<td><code>number</code></td>
+<td>Capacity of storage object</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Storage+price"></a></p>
+<h3>storage.price</h3><p><strong>Kind</strong>: instance property of <code><a href="#Storage">Storage</a></code><br><strong>Properties</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>price</td>
+<td><code>number</code></td>
+<td>Price of storage object</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Storage+prev"></a></p>
+<h3>storage.prev</h3><p><strong>Kind</strong>: instance property of <code><a href="#Storage">Storage</a></code><br><strong>Properties</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>prev</td>
+<td><code>string</code> &#124; <code>undefined</code></td>
+<td>Name of Storage object preceding this object in list of StorageContainer's storage objects.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="StorageContainer"></a></p>
+<h2>StorageContainer</h2><p>Class representing a container for all Storage instances, as well as a representation of the current Storage instance.</p>
+<p><strong>Kind</strong>: global class<br><strong>Typeicalname</strong>: storage  </p>
+<ul>
+<li><a href="#StorageContainer">StorageContainer</a><ul>
+<li><em>instance</em><ul>
+<li><a href="#StorageContainer+name">.name</a> : <code>string</code></li>
+<li><a href="#StorageContainer+capacity">.capacity</a> : <code>number</code></li>
+<li><a href="#StorageContainer+price">.price</a> : <code>number</code></li>
+<li><a href="#StorageContainer+idx">.idx</a> : <code>number</code></li>
+<li><a href="#StorageContainer+current">.current</a> : <code><a href="#Storage">Storage</a></code></li>
+<li><a href="#StorageContainer+upgrade">.upgrade</a> : <code><a href="#Storage">Storage</a></code></li>
+<li><a href="#StorageContainer+otherNames">.otherNames</a> : <code>Array.&lt;string&gt;</code></li>
+<li><a href="#StorageContainer+others">.others</a> : <code>Object</code></li>
+<li><a href="#StorageContainer+allNames">.allNames</a> : <code>Array.&lt;string&gt;</code></li>
+<li><a href="#StorageContainer+all">.all</a> : <code>Object</code></li>
+<li><a href="#StorageContainer+checkStorage">.checkStorage(data, increment)</a> ⇒ <code>boolean</code></li>
+</ul>
+</li>
+<li><em>static</em><ul>
+<li><a href="#StorageContainer.getStorage">.getStorage(storages)</a> ⇒ <code><a href="#StorageContainer">StorageContainer</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><a name="StorageContainer+name"></a></p>
+<h3>storageContainer.name : <code>string</code></h3><p>Name of current storage.</p>
+<p><strong>Kind</strong>: instance property of <code><a href="#StorageContainer">StorageContainer</a></code><br><a name="StorageContainer+capacity"></a></p>
+<h3>storageContainer.capacity : <code>number</code></h3><p>Capacity of current storage.</p>
+<p><strong>Kind</strong>: instance property of <code><a href="#StorageContainer">StorageContainer</a></code><br><a name="StorageContainer+price"></a></p>
+<h3>storageContainer.price : <code>number</code></h3><p>Price of current storage.</p>
+<p><strong>Kind</strong>: instance property of <code><a href="#StorageContainer">StorageContainer</a></code><br><a name="StorageContainer+idx"></a></p>
+<h3>storageContainer.idx : <code>number</code></h3><p>ID of current storage.</p>
+<p><strong>Kind</strong>: instance property of <code><a href="#StorageContainer">StorageContainer</a></code><br><a name="StorageContainer+current"></a></p>
+<h3>storageContainer.current : <code><a href="#Storage">Storage</a></code></h3><p>Current storage.</p>
+<p><strong>Kind</strong>: instance property of <code><a href="#StorageContainer">StorageContainer</a></code><br><a name="StorageContainer+upgrade"></a></p>
+<h3>storageContainer.upgrade : <code><a href="#Storage">Storage</a></code></h3><p>Next storage in upgrade list.</p>
+<p><strong>Kind</strong>: instance property of <code><a href="#StorageContainer">StorageContainer</a></code><br><a name="StorageContainer+otherNames"></a></p>
+<h3>storageContainer.otherNames : <code>Array.&lt;string&gt;</code></h3><p>Names of all storages excluding the currently selected.</p>
+<p><strong>Kind</strong>: instance property of <code><a href="#StorageContainer">StorageContainer</a></code><br><a name="StorageContainer+others"></a></p>
+<h3>storageContainer.others : <code>Object</code></h3><p>All storages excluding the currently selected.</p>
+<p><strong>Kind</strong>: instance property of <code><a href="#StorageContainer">StorageContainer</a></code><br><a name="StorageContainer+allNames"></a></p>
+<h3>storageContainer.allNames : <code>Array.&lt;string&gt;</code></h3><p>Names of all storages.</p>
+<p><strong>Kind</strong>: instance property of <code><a href="#StorageContainer">StorageContainer</a></code><br><a name="StorageContainer+all"></a></p>
+<h3>storageContainer.all : <code>Object</code></h3><p>All storages.</p>
+<p><strong>Kind</strong>: instance property of <code><a href="#StorageContainer">StorageContainer</a></code><br><a name="StorageContainer+checkStorage"></a></p>
+<h3>storageContainer.checkStorage(data, increment) ⇒ <code>boolean</code></h3><p>Check if storage is full.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#StorageContainer">StorageContainer</a></code><br><strong>Returns</strong>: <code>boolean</code> - If storage has enough space.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data</td>
+<td><code>number</code></td>
+<td>Data to check against.</td>
+</tr>
+<tr>
+<td>increment</td>
+<td><code>number</code></td>
+<td>Increment to check against.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="StorageContainer.getStorage"></a></p>
+<h3>StorageContainer.getStorage(storages) ⇒ <code><a href="#StorageContainer">StorageContainer</a></code></h3><p>Instantiate StorageContainer</p>
+<p><strong>Kind</strong>: static method of <code><a href="#StorageContainer">StorageContainer</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>storages</td>
+<td><code>Array.&lt;string&gt;</code> &#124; <code>undefined</code></td>
+<td>Names of storages. If undefined, use default storages.</td>
+</tr>
+</tbody>
+</table></article>
+    </section>
+
+
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+<div class="modal fade" id="searchResults">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Search results</h4>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	
+		on 2016-03-29T19:04:38-05:00
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+<script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			var id = $( heading ).attr( "id" );
+			return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		SearcherDisplay.init();
+	});
+</script>
+
+</body>
+</html>
