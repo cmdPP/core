@@ -64,6 +64,7 @@ class CMD {
      * @param {CMD~commandProviderCallback} commandProvider - Function to provide custom commands. Cannot be ES6 arrow function.
      * @param {CMD~errorHandlerCallback} errorHandler - Function for error handling.
      * @param {boolean} debug=false - Debug mode.
+     * @param {string} blah - test param.
      */
     // constructor(options) {
     constructor(respond, save, load, update, commandProvider, errorHandler, debug) {
