@@ -52,8 +52,8 @@ class CMD {
      * @param {!CMD~saveCallback} save - Function for saving.
      * @param {!CMD~loadCallback} load - Function for loading.
      * @param {!CMD~updateCallback} update - Function for updating.
-     * @param {!CMD~commandProviderCallback} commandProvider - Function to provide custom commands. Cannot be ES6 arrow function.
-     * @param {!CMD~errorHandlerCallback} errorHandler - Function for error handling.
+     * @param {?CMD~commandProviderCallback} commandProvider - Function to provide custom commands. Cannot be ES6 arrow function.
+     * @param {?CMD~errorHandlerCallback} errorHandler - Function for error handling.
      * @param {boolean} debug=false - Debug mode.
      */
     // constructor(options) {
