@@ -1,4 +1,4 @@
-# CMD++ Core
+# [CMD++ Core](http://cmdpp.github.io/)
 
 [![NPM](https://nodei.co/npm/cmdpp-core.png?downloads=true)](https://nodei.co/npm/cmdpp-core/)
 
