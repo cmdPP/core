@@ -31,7 +31,7 @@ function loadCommands() {
                         response = [`${subject}: ${desc}`, `To use: ${usage}`];
                     }
                     
-                    if (aliases) {
+                    if (aliases.length > 0) {
                         response.slice(1, 0, `Aliases: ${aliases.join(' ')}`);
                     }
                     

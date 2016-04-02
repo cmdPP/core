@@ -115,6 +115,8 @@ class CMD {
                 for (let alias of cmd.aliases) {
                     this.aliases[alias] = cmdName;
                 }
+            } else {
+                cmd.aliases = [];
             }
             this._commands[cmdName] = cmd;
         }

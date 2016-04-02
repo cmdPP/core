@@ -162,7 +162,8 @@ gulp.task('release', (cb) => {
     }
   }).argv;
   
-  runSeq('build', `bump-${argv.bump}`, 'commit-changes', 'push-changes', 'create-new-tag', 'github-release', (err) => {
+  // runSeq('build', `bump-${argv.bump}`, 'commit-changes', 'push-changes', 'create-new-tag', 'github-release', (err) => {
+  runSeq(`bump-${argv.bump}`, 'build', 'commit-changes', 'push-changes', 'create-new-tag', 'github-release', (err) => {
     if (err) {
       console.log(err.message);
     } else {
