@@ -63,7 +63,7 @@ function loadCommands() {
                 }
             },
             desc: "Gives list of commands or specific instructions for commands.",
-            usage: "help {subject}"
+            usage: "help {subject}",
             aliases: ['?']
         },
         mineData: {
