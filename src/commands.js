@@ -9,7 +9,7 @@ function loadCommands() {
                     }
                     // let { desc, usage } = this._commands[subject];
                     let cmd = this._commands[subject];
-                    let { desc, usage } = cmd;
+                    let { desc, usage, aliases } = cmd;
                     if (!usage) {
                         usage = subject;
                         let usageParams = cmd.func.toString().match(/\(.*?\)/)[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',');
@@ -21,12 +21,21 @@ function loadCommands() {
                     } else {
                         usage = (typeof usage === "function" ? usage() : usage);
                     }
+                    var response;
                     desc = (typeof desc === "function" ? desc() : desc);
                     if (Array.isArray(desc)) {
-                        this.respond(`${subject}: ${desc[0]}`, `To use: ${usage}\n\n`, ...desc.slice(1));
+                        // this.respond(`${subject}: ${desc[0]}`, `To use: ${usage}\n\n`, ...desc.slice(1));
+                        response = [`${subject}: ${desc[0]}`, `To use: ${usage}\n\n`, ...desc.slice(1)];
                     } else {
-                        this.respond(`${subject}: ${desc}`, `To use: ${usage}`);
+                        // this.respond(`${subject}: ${desc}`, `To use: ${usage}`);
+                        response = [`${subject}: ${desc}`, `To use: ${usage}`];
                     }
+                    
+                    if (aliases) {
+                        response.slice(1, 0, `Aliases: ${aliases.join(' ')}`);
+                    }
+                    
+                    this.respond(...response);
                 } else {
                     var availableCommands = [];
                     for (var cmdName in this._commands) {
@@ -42,13 +51,14 @@ function loadCommands() {
                     ];
                     responseList.push(...availableCommands);
                     responseList.push(...[
-                        '\nFor specific command help type "help [command]"',
+                        '\nFor specific command help type "help [command]"'
                         // "########################################"
                     ]);
                     this.respond(...responseList);
                 }
             },
-            desc: "Gives list of commands or specific instructions for commands."
+            desc: "Gives list of commands or specific instructions for commands.",
+            aliases: ['?']
         },
         mineData: {
             func: () => {

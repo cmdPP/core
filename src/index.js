@@ -102,6 +102,8 @@ class CMD {
         this.loadCommands();
         var customCommands = this.commandProvider();
         Object.assign(this._commands, customCommands);
+        
+        this.aliases = {};
 
         for (let cmdName in this._commands) {
             var cmd = this._commands[cmdName];
@@ -109,7 +111,11 @@ class CMD {
                 cmd.price = 0;
             }
             cmd.unlocked = cmd.price === 0;
-
+            if ('aliases' in cmd) {
+                for (let alias of cmd.aliases) {
+                    this.aliases[alias] = cmdName;
+                }
+            }
             this._commands[cmdName] = cmd;
         }
 
@@ -247,6 +253,9 @@ class CMD {
             }
         } else {
             var cmdWArgs = cmd.split(' ');
+            if (cmdWArgs[0] in this.aliases) {
+                cmdWArgs[0] = this.aliases[cmdWArgs[0]];
+            }
             if (!(cmdWArgs[0] in this._commands)) {
                 this.respond("Command not found.");
             } else {
