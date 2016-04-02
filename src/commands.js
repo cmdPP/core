@@ -30,7 +30,7 @@ function loadCommands() {
                         // this.respond(`${subject}: ${desc}`, `To use: ${usage}`);
                         response = [`${subject}: ${desc}`, `To use: ${usage}`];
                     }
-                    
+                    console.log('Aliases:', aliases);
                     if (aliases.length > 0) {
                         response.slice(1, 0, `Aliases: ${aliases.join(' ')}`);
                     }
