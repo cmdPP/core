@@ -10,17 +10,22 @@ function loadCommands() {
                     // let { desc, usage } = this._commands[subject];
                     let cmd = this._commands[subject];
                     let { desc, usage, aliases } = cmd;
-                    if (!usage) {
-                        usage = subject;
-                        let usageParams = cmd.func.toString().match(/\(.*?\)/)[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',');
-                        if (usageParams.length > 0 && usageParams[0] !== "") {
-                            for (let paramName of usageParams) {
-                                usage += ` ${paramName}`;
-                            }
-                        }
-                    } else {
-                        usage = (typeof usage === "function" ? usage() : usage);
-                    }
+                    
+                    // Removed until further notice due to minification problems with reflection.
+                    
+                    // if (!usage) {
+                    //     usage = subject;
+                    //     let usageParams = cmd.func.toString().match(/\(.*?\)/)[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',');
+                    //     if (usageParams.length > 0 && usageParams[0] !== "") {
+                    //         for (let paramName of usageParams) {
+                    //             usage += ` ${paramName}`;
+                    //         }
+                    //     }
+                    // } else {
+                    //     usage = (typeof usage === "function" ? usage() : usage);
+                    // }
+                    usage = (typeof usage === "function" ? usage() : usage);
+                    
                     var response;
                     desc = (typeof desc === "function" ? desc() : desc);
                     if (Array.isArray(desc)) {
@@ -58,6 +63,7 @@ function loadCommands() {
                 }
             },
             desc: "Gives list of commands or specific instructions for commands.",
+            usage: "help {subject}"
             aliases: ['?']
         },
         mineData: {
@@ -69,14 +75,16 @@ function loadCommands() {
                     this.respond("Your storage is full. Please upgrade storage to continue.");
                 }
             },
-            desc: "Increments data by your increment amount. The default is 1 byte."
+            desc: "Increments data by your increment amount. The default is 1 byte.",
+            usage: "mineData"
         },
         save: {
             func: () => {
                 this.save();
             },
             desc: "Saves progress.",
-            unlocked: true
+            usage: "save"
+            // unlocked: true
         },
         autoMine: {
             func: (light) => {
@@ -151,7 +159,7 @@ function loadCommands() {
                 }
             },
             desc: "Converts data to money. The conversion is 1 byte for $1, but the data deteriorates during transfer.",
-            usage: "sellData amount [unit]",
+            usage: "sellData {amount} [unit]",
             price: 250
         },
         buyData: {
@@ -198,7 +206,7 @@ function loadCommands() {
                 }
             },
             desc: "Converts money to data. The conversion is 1 byte for $2.",
-            usage: "buyData amount [unit]",
+            usage: "buyData {amount} [unit]",
             price: 150
         },
         buyCommand: {
@@ -233,13 +241,16 @@ function loadCommands() {
                     "Available commands:",
                     ...cmdList
                 ];
-            }
+            },
+            usage: "buyCommand {command}",
+            aliases: ['apt-get']
         },
         load: {
             func: () => {
                 this.load();
             },
-            desc: "Loads previously saved games."
+            desc: "Loads previously saved games.",
+            usage: "load"
         },
         // sampleData: {
         //     func: () => {
@@ -308,7 +319,8 @@ function loadCommands() {
                 this.respond(...['Your current storage is:', `\tName: ${this.storage.name}`, `\tCapacity: ${this.storage.capacity}`]);
             },
             desc: "Responds with your current storage.",
-            unlocked: true
+            usage: "currentStorage"
+            // unlocked: true
         },
         // upgradeMine: {
         //     func: () => {
@@ -329,13 +341,15 @@ function loadCommands() {
                 this.reset();
             },
             desc: "Resets all progress.",
-            unlocked: true
+            usage: "reset"
+            // unlocked: true
         },
         version: {
             func: () => {
                 this.respond(`v${this.version}`);
             },
-            desc: "Displays the current version."
+            desc: "Displays the current version.",
+            usage: "version"
         },
         upgrade: {
             func: (command = "") => {
@@ -410,7 +424,53 @@ function loadCommands() {
                     "Available upgrades:",
                     ...newResponse
                 ];
-            }
+            },
+            usage: "upgrade {thing}"
+        },
+        alias: {
+            func: (action, name, command) => {
+                // if (!name || !command) {
+                //     this.respond("Insufficient parameters.");
+                //     return;
+                // }
+                // if (!(command in this._commands)) {
+                //     this.respond("Command not found for aliasing.");
+                // }
+                // 
+                // this.playerAliases[name] = command;
+                // this.aliases[name] = command;
+                // this.respond(`Alias created: ${name} -> ${command}`);
+                if (!action || !name) {
+                    this.respond("Insufficient parameters.");
+                } else if (action === "add" && !command) {
+                    this.respond("Insufficient parameters.");
+                }
+                
+                if (action === "add") {
+                    this.playerAliases[name] = command;
+                    this.aliases[name] = command;
+                } else if (action === "remove") {
+                    if (name in this.playerAliases) {
+                        delete this.playerAliases[name];
+                        delete this.aliases[name];
+                    } else {
+                        this.respond("Player alias does not exist.");
+                    }
+                }
+            },
+            desc: () => {
+                var aliases = [];
+                for (let aliasName in this.playerAliases) {
+                    var alias = this.playerAliases[aliasName];
+                    aliases.push(`\t${aliasName} -> ${alias}`);
+                }
+                return [
+                    "Creates aliases for commonly used commands.",
+                    "Current player aliases:",
+                    ...aliases
+                ];
+            },
+            usage: "alias (add | remove) {name} {command}"
         }
         // cheat: {
         //     func: () => {

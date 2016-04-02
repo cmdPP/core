@@ -8,6 +8,8 @@ import runSeq from 'run-sequence';
 import del from 'del';
 import fs from 'fs';
 import yargs from 'yargs';
+import webpack from 'webpack-stream';
+import webpackConf from './webpack.config';
 // import { exec } from 'child_process';
 import jsdocConf from './jsdoc.conf.json';
 // import pJSON from './package.json';
@@ -54,16 +56,16 @@ gulp.task('babel:build', () => {
   return gulp.src('src/**/*.js').pipe(plugins.babel()).pipe(gulp.dest('lib'));
 });
 
-gulp.task('babel:clean', () => {
-  return del('lib/**/*');
-});
-
-gulp.task('babel', (cb) => {
-  return runSeq('babel:clean', 'babel:build', cb);
-});
+// gulp.task('babel:clean', () => {
+//   return del('lib/**/*');
+// });
+// 
+// gulp.task('babel', (cb) => {
+//   return runSeq('babel:clean', 'babel:build', cb);
+// });
 
 gulp.task('build', (cb) => {
-  return runSeq('babel', 'browser', cb);
+  return runSeq('browser', cb);
 });
 
 gulp.task('test', () => {
@@ -171,4 +173,10 @@ gulp.task('release', (cb) => {
     }
     cb(err);
   });
+});
+
+gulp.task('webpack', () => {
+  return gulp.src('src/web.js')
+    .pipe(webpack(webpackConf))
+    .pipe(gulp.dest('build'));
 });

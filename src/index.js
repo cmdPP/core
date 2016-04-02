@@ -104,6 +104,7 @@ class CMD {
         Object.assign(this._commands, customCommands);
         
         this.aliases = {};
+        this.playerAliases = {};
 
         for (let cmdName in this._commands) {
             var cmd = this._commands[cmdName];
