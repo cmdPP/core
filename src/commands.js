@@ -444,6 +444,8 @@ function loadCommands() {
                     this.respond("Insufficient parameters.");
                 } else if (action === "add" && !command) {
                     this.respond("Insufficient parameters.");
+                } else if (action !== "add" || action !== "remove") {
+                    this.respond("Unrecognized action.");
                 }
                 
                 if (action === "add") {

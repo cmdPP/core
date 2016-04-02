@@ -31,7 +31,9 @@ var cmd = new CMD(
                 unlocked: true
             }
         }
-    }
+    },
+    () => {},
+    true
 );
 
 describe('CMD', () => {
@@ -64,6 +66,13 @@ describe('CMD', () => {
         cmd.command('mineData');
         expect(cmd.data).to.equal(currentData + 1);
     });
+    
+    it('creates an alias', () => {
+        var currentData = cmd.data;
+        cmd.command('alias add mD mineData');
+        cmd.command('mD');
+        expect(cmd.data).to.equal(currentData + 1);
+    })
 
     it('adds money', () => {
         var currentMoney = cmd.money;
